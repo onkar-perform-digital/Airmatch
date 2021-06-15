@@ -1,5 +1,8 @@
 import 'dart:convert';
 
+import 'package:am_debug/Services/Database.dart';
+import 'package:am_debug/UI/Dashboard/DashboardScreen.dart';
+import 'package:am_debug/UI/Trips/trips.dart';
 import 'package:flutter/material.dart';
 import '../../helpers/FlightsModel.dart';
 import 'package:http/http.dart' as http;
@@ -7,8 +10,9 @@ import 'package:http/http.dart' as http;
 class FlightsList extends StatefulWidget {
   // const FlightsList({Key key}) : super(key: key);
 
-  String date, arrivalAirport, departureAirport;
-  FlightsList({this.arrivalAirport, this.date, this.departureAirport});
+  String date, arrivalAirport, departureAirport, bookingNo;
+  FlightsList(
+      {this.arrivalAirport, this.date, this.departureAirport, this.bookingNo});
 
   @override
   _FlightsListState createState() => _FlightsListState();
@@ -34,6 +38,7 @@ class _FlightsListState extends State<FlightsList> {
           FlightsModel flight = FlightsModel();
 
           flight.airlineName = element['airline']['name'];
+          flight.airlineNo = element['flight']['iata'];
           flight.departureTime = element['departure']['scheduled'];
           flight.arrivalTime = element['arrival']['scheduled'];
 
@@ -41,6 +46,7 @@ class _FlightsListState extends State<FlightsList> {
           print(flight.airlineName);
           print(flight.arrivalTime);
           print(flight.departureTime);
+          print(flight.airlineNo);
           setState(() {});
         }
       }
@@ -73,7 +79,8 @@ class _FlightsListState extends State<FlightsList> {
                 itemCount: flights.length,
                 itemBuilder: (context, index) {
                   return airportTile(
-                    name: flights[index].airlineName,
+                    airlineName: flights[index].airlineName,
+                    airlineNo: flights[index].airlineNo,
                     arrivalTime: flights[index].arrivalTime,
                     departureTime: flights[index].departureTime,
                   );
@@ -82,10 +89,28 @@ class _FlightsListState extends State<FlightsList> {
     );
   }
 
-  Widget airportTile({String name, String arrivalTime, String departureTime}) {
+  Widget airportTile(
+      {String airlineName,
+      String airlineNo,
+      String arrivalTime,
+      String departureTime}) {
     return GestureDetector(
-      onTap: () {
-        //Navigator.pop(context, "$name");
+      onTap: () async {
+        await DatabaseMethods()
+            .uploadTriptoDB(
+              widget.date.toString(),
+              widget.departureAirport.toString(),
+              widget.arrivalAirport.toString(),
+              widget.bookingNo.toString(),
+              airlineName.toString(),
+              airlineNo.toString(),
+              arrivalTime.toString(),
+              departureTime.toString(),
+            )
+            .then((value) => Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => Trip()),
+                (route) => false));
       },
       child: Container(
         padding: EdgeInsets.all(20.0),
@@ -95,7 +120,7 @@ class _FlightsListState extends State<FlightsList> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  name,
+                  "$airlineName -- $airlineNo",
                   style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w600),
                 ),
                 Text(

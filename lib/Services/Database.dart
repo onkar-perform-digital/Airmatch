@@ -19,9 +19,9 @@ class DatabaseMethods {
     await FirebaseFirestore.instance.collection("users").doc(uid).set(userInfo);
   }
 
-    uploadTravelInfo(String uid, Map userInfo, String from, String to) async {
+    uploadTravelInfo(String uid, Map userInfo, String from, String to, String airlineNo) async {
     print('$uid');
-    await FirebaseFirestore.instance.collection("users").doc(uid).collection("User Travel Info").doc("$from -> $to").set(userInfo);
+    await FirebaseFirestore.instance.collection("users").doc(uid).collection("User Travel Info").doc("$from -> $to : $airlineNo").set(userInfo);
   }
 
   // Future updateInfo(String uid, String date, String city) async {
@@ -74,7 +74,7 @@ class DatabaseMethods {
   }
 
     Future<void> uploadTriptoDB(String date, String travellingFrom, String travellingTo,
-      String bookingNo) async {
+      String bookingNo, String airlineName, String airlineNo, String arrivalTime, String departureTime) async {
 
     if (Constants.uid != null) {
       Map<String, dynamic> tripInfoMap = {
@@ -82,9 +82,13 @@ class DatabaseMethods {
         "Travelling from": travellingFrom.toString(),
         "Travelling to": travellingTo.toString(),
         "Booking No": bookingNo.toString(),
+        "Flight Arrival time": arrivalTime.toString(),
+        "Flight Departure time": departureTime.toString(),
+        "Airline Name": airlineName.toString(),
+        "Airline No": airlineNo.toString() 
       };
 
-      await DatabaseMethods().uploadTravelInfo(Constants.uid, tripInfoMap, travellingFrom, travellingTo);
+      await DatabaseMethods().uploadTravelInfo(Constants.uid, tripInfoMap, travellingFrom, travellingTo, airlineNo);
     }
   }
 
