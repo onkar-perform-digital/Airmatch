@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "562148433860",
+    "project_id": "airmatch-debug",
+    "storage_bucket": "airmatch-debug.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:562148433860:android:38824268fdbfe6b3ce4e91",
+        "android_client_info": {
+          "package_name": "com.example.am_debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "562148433860-dchg0faasp8n1tl7jliil4tuhsvirjo0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.am_debug",
+            "certificate_hash": "b3603c8f3f4282e55a899548069d38c9183d776d"
+          }
+        },
+        {
+          "client_id": "562148433860-6ggql0tdvqsbc1mkgtmb6tahljd7pl3n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAIhRBEq0DyDDhlEq4wHZcSPPUMzMZCaMQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "562148433860-6ggql0tdvqsbc1mkgtmb6tahljd7pl3n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

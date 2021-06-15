@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="72.3" height="70.774" viewBox="0 0 72.3 70.774">
+  <g id="app_profile_icon" data-name="app profile icon" transform="translate(-137.3 -129.639)">
+    <path id="Subtraction_2" data-name="Subtraction 2" d="M31.007,53.488H0V46.8a7.91,7.91,0,0,1,2.933-5.827,23.345,23.345,0,0,1,7.117-4.181,48.743,48.743,0,0,1,8.778-2.52,43.787,43.787,0,0,1,7.916-.844,48.223,48.223,0,0,1,11.79,1.738,22.555,22.555,0,0,0-7.575,16.85c0,.489.016.983.047,1.469ZM26.744,26.744a13.207,13.207,0,0,1-5.192-1.055,13.5,13.5,0,0,1-7.125-7.125,13.3,13.3,0,0,1,0-10.384,13.5,13.5,0,0,1,7.125-7.125,13.3,13.3,0,0,1,10.385,0A13.5,13.5,0,0,1,39.061,8.18a13.3,13.3,0,0,1,0,10.384,13.5,13.5,0,0,1-7.125,7.125A13.207,13.207,0,0,1,26.744,26.744Z" transform="translate(139.8 132.139)" fill="none" stroke="#358ee8" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+    <g id="Icon_ionic-md-add-circle-outline" data-name="Icon ionic-md-add-circle-outline" transform="translate(177.09 167.903)">
+      <path id="Path_16" data-name="Path 16" d="M27.2,20.48H20.48V27.2H17.2V20.48H10.477V17.2H17.2V10.477H20.48V17.2H27.2Z" transform="translate(-2.584 -2.584)" fill="#358ee8"/>
+      <path id="Path_17" data-name="Path 17" d="M19.63,6.657a12.967,12.967,0,1,1-9.175,3.8,12.919,12.919,0,0,1,9.175-3.8m0-3.282A16.255,16.255,0,1,0,35.885,19.63,16.252,16.252,0,0,0,19.63,3.375Z" transform="translate(-3.375 -3.375)" fill="#358ee8"/>
+    </g>
+  </g>
+</svg>
