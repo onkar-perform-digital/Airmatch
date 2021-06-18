@@ -1,4 +1,5 @@
 import 'package:am_debug/UI/Dashboard/Profilepage.dart';
+import 'package:am_debug/UI/Flight%20GroupChat/groupchat.dart';
 import 'package:am_debug/UI/one-to-one%20chatting/Chat.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -33,18 +34,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
           actions: [
             IconButton(
               icon: Icon(
-                Icons.account_box,
-                color: Color(0xFF358EE8),
-              ),
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => ProfilePage()));
-              },
-            ),
-            IconButton(
-              
-              icon: Icon(
-                
                 Icons.add_alert,
                 color: Colors.blue,
               ),
@@ -86,16 +75,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
             padding: EdgeInsets.zero,
             children: [
               DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                ),
-                child: Row(
-                  children: [
-                    Text("dnfjgkdsf"),
-                    Text("dnfjgkdsf")
-                  ],
-                )
-              ),
+                  decoration: BoxDecoration(
+                    color: Colors.blue,
+                  ),
+                  child: Row(
+                    children: [Text("dnfjgkdsf"), Text("dnfjgkdsf")],
+                  )),
               ListTile(
                 title: Text('Item 1'),
                 onTap: () {
@@ -112,11 +97,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ),
         body: TabBarView(
-          children: [
-            Icon(Icons.directions_car),
-            Trip(),
-            Chat()
-          ],
+          children: [GroupChat(), Trip(), Chat()],
         ),
       ),
     );

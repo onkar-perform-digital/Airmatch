@@ -4,6 +4,7 @@ import 'package:am_debug/UI/Flights/FlightsList.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:am_debug/helpers/AirportModel.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
 class AirportSearch extends StatefulWidget {
@@ -17,15 +18,18 @@ class _AirportSearchState extends State<AirportSearch> {
   TextEditingController searchController = TextEditingController();
   List<AirportModel> airports = <AirportModel>[];
 
-  String url =
-      "http://api.aviationstack.com/v1/airports?access_key=72c69476757a9d606ccfcb4bee84ce62&limit=6472";
+  // String url =
+  //     "http://api.aviationstack.com/v1/airports?access_key=72c69476757a9d606ccfcb4bee84ce62&limit=6472";
+
+  String url = "Data/airports.json";
 
   Future<void> getAirports(String query) async {
     airports = [];
-    var response = await http.get(url);
+    //var response = await http.get(url);
+    var response = await rootBundle.loadString(url);
     //print(response);
 
-    var jsonData = jsonDecode(response.body);
+    var jsonData = jsonDecode(response);
 
     print(jsonData);
     jsonData['data'].forEach((element) {
@@ -75,9 +79,9 @@ class _AirportSearchState extends State<AirportSearch> {
                       ),
                       onChanged: (String query) {
                         if (searchController != null) {
-                          // setState(() {
-                          //   getAirports(searchController.text.toString());
-                          // });
+                          setState(() {
+                            getAirports(searchController.text.toString());
+                          });
                         }
                       },
                       decoration: InputDecoration(

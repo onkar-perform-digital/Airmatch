@@ -1,3 +1,7 @@
+import 'package:am_debug/Services/Database.dart';
+import 'package:am_debug/UI/Flight%20GroupChat/chat_page.dart';
+import 'package:am_debug/helpers/constants.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:am_debug/UI/Trips/tripBottomSheet.dart';
 
@@ -10,6 +14,28 @@ class Trip extends StatefulWidget {
 
 class _TripState extends State<Trip> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
+  Future<bool> doesGroupAlreadyExist(String grpName) async {
+    final QuerySnapshot result = await FirebaseFirestore.instance
+        .collection('groups')
+        .where('groupName', isEqualTo: grpName)
+        .get();
+
+    final List<DocumentSnapshot> documents = result.docs;
+
+    if (documents.length > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  @override
+  void initState() {
+    doesGroupAlreadyExist("nova");
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,6 +49,28 @@ class _TripState extends State<Trip> {
           children: [
             Container(
               height: MediaQuery.of(context).size.height * 70 / 100,
+              child: StreamBuilder(
+                stream: FirebaseFirestore.instance
+                    .collection('users/${Constants.uid}/User Travel Info')
+                    .snapshots(),
+                builder:
+                    (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
+                  return ListView.builder(
+                      itemCount: streamSnapshot.data.docs.length,
+                      itemBuilder: (context, index) {
+                        return tripTile(
+                            streamSnapshot.data.docs[index]['Airline Name'],
+                            streamSnapshot.data.docs[index]['Airline No'],
+                            streamSnapshot.data.docs[index]
+                                ['Flight Arrival time'],
+                            streamSnapshot.data.docs[index]
+                                ['Flight Departure time'],
+                            streamSnapshot.data.docs[index]['Date'],
+                            streamSnapshot.data.docs[index]['Travelling to'],
+                            streamSnapshot.data.docs[index]['Travelling from']);
+                      });
+                },
+              ),
             ),
             InkWell(
               onTap: () {
@@ -59,6 +107,129 @@ class _TripState extends State<Trip> {
               ),
             )
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget tripTile(
+      String airlineName,
+      String airlineNo,
+      String arrivalTime,
+      String departureTime,
+      String date,
+      String arrivalAirport,
+      String departureAirport) {
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: Container(
+          color: Colors.white,
+          height: 200,
+          width: MediaQuery.of(context).size.width,
+          child: Column(
+            children: [
+              Container(
+                height: 45,
+                child: Row(
+                  children: [
+                    Text("$airlineNo"),
+                    SizedBox(
+                      width: 20,
+                    ),
+                    Text("$date"),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width - 250,
+                    ),
+                    //TODO
+                    // Text("${FirebaseFirestore.instance.collection('groups').doc('$date : $airlineNo')}"),
+                  ],
+                ),
+              ),
+              GestureDetector(
+                onTap: () async {
+                  var grpname = "$date : $airlineNo";
+                  if (await doesGroupAlreadyExist(grpname) == true) {
+                    DatabaseMethods().joinGrp(Constants.myname, grpname);
+                  } else {
+                    DatabaseMethods().createGroup(Constants.myname, grpname);
+                  }
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => ChatPage(groupId: grpname, groupName: grpname, userName: Constants.myname)));
+                },
+                child: Container(
+                  color: Colors.green,
+                  height: 155,
+                  width: MediaQuery.of(context).size.width,
+                  // color: Colors.yellow,
+                  child: Row(
+                    //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Expanded(
+                        child: Container(
+                          padding: EdgeInsets.only(left: 10),
+                            child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "$departureAirport",
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text("Departure"),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text("1:15pm")
+                          ],
+                        )),
+                      ),
+                      Expanded(
+                        child: Container(
+                            //color: Colors.blue,
+                            child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "$airlineName",
+                              style: TextStyle(fontSize: 15),
+                            ),
+                            //SizedBox(height: 10,),
+                            Text("-------------->"),
+                          ],
+                        )),
+                      ),
+                      Expanded(
+                        child: Container(
+                            child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "$arrivalAirport",
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text("Arrival"),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text("3:15pm")
+                          ],
+                        )),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
