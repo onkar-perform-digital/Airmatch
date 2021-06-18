@@ -1,5 +1,5 @@
 import 'package:am_debug/UI/Dashboard/Profilepage.dart';
-import 'package:am_debug/UI/Flight%20GroupChat/groupchat.dart';
+import 'package:am_debug/UI/City GroupChat/citygroupchat.dart';
 import 'package:am_debug/UI/one-to-one%20chatting/Chat.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -97,7 +97,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ),
         body: TabBarView(
-          children: [GroupChat(), Trip(), Chat()],
+          children: [CityGroupChat(), Trip(), Chat()],
         ),
       ),
     );

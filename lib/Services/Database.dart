@@ -202,37 +202,37 @@ class DatabaseMethods {
   }
 
   // toggling the user group join
-  Future togglingGroupJoin(
-      String groupId, String groupName, String userName) async {
-    DocumentReference userDocRef =
-        FirebaseFirestore.instance.collection('users').doc(Constants.uid);
-    DocumentSnapshot userDocSnapshot = await userDocRef.get();
+  // Future togglingGroupJoin(
+  //     String groupId, String groupName, String userName) async {
+  //   DocumentReference userDocRef =
+  //       FirebaseFirestore.instance.collection('users').doc(Constants.uid);
+  //   DocumentSnapshot userDocSnapshot = await userDocRef.get();
 
-    DocumentReference groupDocRef =
-        FirebaseFirestore.instance.collection('groups').doc(groupId);
+  //   DocumentReference groupDocRef =
+  //       FirebaseFirestore.instance.collection('groups').doc(groupId);
 
-    List<dynamic> groups = await userDocSnapshot.data()['groups'];
+  //   List<dynamic> groups = await userDocSnapshot.data()['groups'];
 
-    if (groups.contains(groupId + '_' + groupName)) {
-      //print('hey');
-      await userDocRef.update({
-        'groups': FieldValue.arrayRemove([groupId + '_' + groupName])
-      });
+  //   if (groups.contains(groupId + '_' + groupName)) {
+  //     //print('hey');
+  //     await userDocRef.update({
+  //       'groups': FieldValue.arrayRemove([groupId + '_' + groupName])
+  //     });
 
-      await groupDocRef.update({
-        'members': FieldValue.arrayRemove([Constants.uid + '_' + userName])
-      });
-    } else {
-      //print('nay');
-      await userDocRef.update({
-        'groups': FieldValue.arrayUnion([groupId + '_' + groupName])
-      });
+  //     await groupDocRef.update({
+  //       'members': FieldValue.arrayRemove([Constants.uid + '_' + userName])
+  //     });
+  //   } else {
+  //     //print('nay');
+  //     await userDocRef.update({
+  //       'groups': FieldValue.arrayUnion([groupId + '_' + groupName])
+  //     });
 
-      await groupDocRef.update({
-        'members': FieldValue.arrayUnion([Constants.uid + '_' + userName])
-      });
-    }
-  }
+  //     await groupDocRef.update({
+  //       'members': FieldValue.arrayUnion([Constants.uid + '_' + userName])
+  //     });
+  //   }
+  // }
 
   // has user joined the group
   Future<bool> isUserJoined(
@@ -301,5 +301,114 @@ class DatabaseMethods {
         .collection("groups")
         .where('groupName', isEqualTo: groupName)
         .get();
+  }
+
+    // create group
+  Future createCityGroup(String userName, String groupName) async {
+    await FirebaseFirestore.instance.collection('City groups').doc(groupName).set({
+      'groupName': groupName,
+      'groupIcon': '',
+      'admin': userName,
+      'members': [],
+      //'messages': ,
+      'groupId': '',
+      'recentMessage': '',
+      'recentMessageSender': ''
+    });
+
+    await FirebaseFirestore.instance
+        .collection('City groups')
+        .doc(groupName)
+        .update({
+      'members': FieldValue.arrayUnion([Constants.uid + '_' + userName]),
+      'groupId': groupName
+    });
+
+    DocumentReference userDocRef =
+        FirebaseFirestore.instance.collection('users').doc(Constants.uid);
+    return await userDocRef.update({
+      'City groups': FieldValue.arrayUnion([groupName])
+    });
+  }
+
+  Future joinCityGrp(String userName, String grpName) async {
+    DocumentReference userDocRef =
+        FirebaseFirestore.instance.collection('users').doc(Constants.uid);
+    DocumentSnapshot userDocSnapshot = await userDocRef.get();
+
+    DocumentReference groupDocRef =
+        FirebaseFirestore.instance.collection('City groups').doc(grpName);
+
+    List<dynamic> groups = await userDocSnapshot.data()['groups'];
+
+    if (groups.contains(grpName)) {
+      //print('hey');
+      await userDocRef.update({
+        'City groups': FieldValue.arrayRemove([grpName])
+      });
+
+      await groupDocRef.update({
+        'members': FieldValue.arrayRemove([Constants.uid + '_' + userName])
+      });
+    } else {
+      //print('nay');
+      await userDocRef.update({
+        'City groups': FieldValue.arrayUnion([grpName])
+      });
+
+      await groupDocRef.update({
+        'members': FieldValue.arrayUnion([Constants.uid + '_' + userName])
+      });
+    }
+  }
+
+    Future<bool> isUserJoinedinCityGrp(
+      String groupId, String groupName, String userName) async {
+    DocumentReference userDocRef =
+        FirebaseFirestore.instance.collection('users').doc(Constants.uid);
+    DocumentSnapshot userDocSnapshot = await userDocRef.get();
+
+    List<dynamic> groups = await userDocSnapshot.data()['City groups'];
+
+    if (groups.contains(groupId + '_' + groupName)) {
+      //print('he');
+      return true;
+    } else {
+      //print('ne');
+      return false;
+    }
+  }
+
+  // get user groups
+  getUserCityGroups() async {
+    // return await Firestore.instance.collection("users").where('email', isEqualTo: email).snapshots();
+    return FirebaseFirestore.instance
+        .collection("users")
+        .doc("${Constants.uid}")
+        .snapshots();
+  }
+
+  // send message
+  sendMessageCity(String groupId, chatMessageData) {
+    FirebaseFirestore.instance
+        .collection('City groups')
+        .doc(groupId)
+        .collection('messages')
+        .add(chatMessageData);
+    FirebaseFirestore.instance.collection('City groups').doc(groupId).update({
+      'recentMessage': chatMessageData['message'],
+      'recentMessageSender': chatMessageData['sender'],
+      'recentMessageTime': chatMessageData['time'].toString(),
+    });
+  }
+
+  // get chats of a particular group
+  getCityChats(String groupId) async {
+    return FirebaseFirestore.instance
+        .collection('City groups')
+        .doc(groupId)
+        .collection('messages')
+        .orderBy('time')
+        .snapshots();
   }
 }

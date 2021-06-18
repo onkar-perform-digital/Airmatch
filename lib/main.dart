@@ -1,7 +1,6 @@
 import 'package:am_debug/UI/AppStartAnimation.dart';
 import 'package:am_debug/UI/Dashboard/DashboardScreen.dart';
 import 'package:am_debug/UI/Dashboard/Profilepage.dart';
-import 'package:am_debug/UI/GroupChat/groupchat.dart';
 import 'package:am_debug/UI/Registration/AddProfilePicture.dart';
 import 'package:am_debug/UI/Registration/UserInformation.dart';
 import 'package:am_debug/UI/Sign%20In/LoginScreen.dart';
