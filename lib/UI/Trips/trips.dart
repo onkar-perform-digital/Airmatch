@@ -1,9 +1,14 @@
+import 'dart:ui';
+
 import 'package:am_debug/Services/Database.dart';
+import 'package:am_debug/Services/photos_api.dart';
 import 'package:am_debug/UI/Flight%20GroupChat/chat_page.dart';
 import 'package:am_debug/helpers/constants.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:am_debug/UI/Trips/tripBottomSheet.dart';
+import 'package:flutter_image/flutter_image.dart';
 
 class Trip extends StatefulWidget {
   const Trip({Key key}) : super(key: key);
@@ -14,6 +19,8 @@ class Trip extends StatefulWidget {
 
 class _TripState extends State<Trip> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  String url =
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/1200px-No_image_3x4.svg.png";
 
   Future<bool> doesGroupAlreadyExist(String grpName) async {
     final QuerySnapshot result = await FirebaseFirestore.instance
@@ -30,11 +37,16 @@ class _TripState extends State<Trip> {
     }
   }
 
-  @override
-  void initState() {
-    doesGroupAlreadyExist("nova");
-    super.initState();
+  Future<String> getImgUrl(String name) async {
+    String res = await PhotosApi().getImgUrl(name);
+    return res;
   }
+
+  // @override
+  // void initState() {
+  //   doesGroupAlreadyExist("nova");
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -59,15 +71,16 @@ class _TripState extends State<Trip> {
                       itemCount: streamSnapshot.data.docs.length,
                       itemBuilder: (context, index) {
                         return tripTile(
-                            streamSnapshot.data.docs[index]['Airline Name'],
-                            streamSnapshot.data.docs[index]['Airline No'],
-                            streamSnapshot.data.docs[index]
-                                ['Flight Arrival time'],
-                            streamSnapshot.data.docs[index]
-                                ['Flight Departure time'],
-                            streamSnapshot.data.docs[index]['Date'],
-                            streamSnapshot.data.docs[index]['Travelling to'],
-                            streamSnapshot.data.docs[index]['Travelling from']);
+                          streamSnapshot.data.docs[index]['Airline Name'],
+                          streamSnapshot.data.docs[index]['Airline No'],
+                          streamSnapshot.data.docs[index]
+                              ['Flight Arrival time'],
+                          streamSnapshot.data.docs[index]
+                              ['Flight Departure time'],
+                          streamSnapshot.data.docs[index]['Date'],
+                          streamSnapshot.data.docs[index]['Travelling to'],
+                          streamSnapshot.data.docs[index]['Travelling from'],
+                        );
                       });
                 },
               ),
@@ -113,13 +126,14 @@ class _TripState extends State<Trip> {
   }
 
   Widget tripTile(
-      String airlineName,
-      String airlineNo,
-      String arrivalTime,
-      String departureTime,
-      String date,
-      String arrivalAirport,
-      String departureAirport) {
+    String airlineName,
+    String airlineNo,
+    String arrivalTime,
+    String departureTime,
+    String date,
+    String arrivalAirport,
+    String departureAirport,
+  ) {
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: ClipRRect(
@@ -155,78 +169,196 @@ class _TripState extends State<Trip> {
                   } else {
                     DatabaseMethods().createGroup(Constants.myname, grpname);
                   }
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => ChatPage(groupId: grpname, groupName: grpname, userName: Constants.myname)));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ChatPage(
+                              groupId: grpname,
+                              groupName: grpname,
+                              userName: Constants.myname)));
                 },
-                child: Container(
-                  color: Colors.green,
-                  height: 155,
-                  width: MediaQuery.of(context).size.width,
-                  // color: Colors.yellow,
-                  child: Row(
-                    //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Expanded(
-                        child: Container(
-                          padding: EdgeInsets.only(left: 10),
-                            child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
+                child: FutureBuilder<String>(
+                    future: getImgUrl(arrivalAirport.toString()),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return Stack(
                           children: [
-                            Text(
-                              "$departureAirport",
-                              style: TextStyle(fontSize: 16),
+                            Image.network(
+                              snapshot.data,
+                              fit: BoxFit.cover,
+                              height: 155,
+                              width: MediaQuery.of(context).size.width,
                             ),
-                            SizedBox(
-                              height: 10,
+                            Container(
+                              child: ClipRRect(
+                                child: BackdropFilter(
+                                  filter: ImageFilter.blur(
+                                      sigmaX: 5.0, sigmaY: 5.0),
+                                  child: Container(
+                                    // decoration: BoxDecoration(
+                                    //   image: DecorationImage(
+                                    //     image: NetworkImage(snapshot.data),
+                                    //     fit: BoxFit.cover,
+                                    //   ),
+                                    // ),
+                                    height: 155,
+                                    width: MediaQuery.of(context).size.width,
+                                    child: Row(
+                                      //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Expanded(
+                                          child: Container(
+                                              padding:
+                                                  EdgeInsets.only(left: 10),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    "$departureAirport",
+                                                    style:
+                                                        TextStyle(fontSize: 16),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Text("Departure"),
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Text("1:15pm")
+                                                ],
+                                              )),
+                                        ),
+                                        Expanded(
+                                          child: Container(
+                                              //color: Colors.blue,
+                                              child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                "$airlineName",
+                                                style: TextStyle(fontSize: 15),
+                                              ),
+                                              //SizedBox(height: 10,),
+                                              Text("-------------->"),
+                                            ],
+                                          )),
+                                        ),
+                                        Expanded(
+                                          child: Container(
+                                              child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                "$arrivalAirport",
+                                                style: TextStyle(fontSize: 16),
+                                              ),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              Text("Arrival"),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              Text("3:15pm")
+                                            ],
+                                          )),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ),
-                            Text("Departure"),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text("1:15pm")
                           ],
-                        )),
-                      ),
-                      Expanded(
-                        child: Container(
-                            //color: Colors.blue,
-                            child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
+                        );
+                      }
+                      return Container(
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: NetworkImage(
+                                "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/1200px-No_image_3x4.svg.png"),
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                        height: 155,
+                        width: MediaQuery.of(context).size.width,
+                        child: Row(
+                          //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            Text(
-                              "$airlineName",
-                              style: TextStyle(fontSize: 15),
+                            Expanded(
+                              child: Container(
+                                  padding: EdgeInsets.only(left: 10),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "$departureAirport",
+                                        style: TextStyle(fontSize: 16),
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text("Departure"),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text("1:15pm")
+                                    ],
+                                  )),
                             ),
-                            //SizedBox(height: 10,),
-                            Text("-------------->"),
+                            Expanded(
+                              child: Container(
+                                  //color: Colors.blue,
+                                  child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "$airlineName",
+                                    style: TextStyle(fontSize: 15),
+                                  ),
+                                  //SizedBox(height: 10,),
+                                  Text("-------------->"),
+                                ],
+                              )),
+                            ),
+                            Expanded(
+                              child: Container(
+                                  child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "$arrivalAirport",
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text("Arrival"),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text("3:15pm")
+                                ],
+                              )),
+                            ),
                           ],
-                        )),
-                      ),
-                      Expanded(
-                        child: Container(
-                            child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "$arrivalAirport",
-                              style: TextStyle(fontSize: 16),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text("Arrival"),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text("3:15pm")
-                          ],
-                        )),
-                      ),
-                    ],
-                  ),
-                ),
+                        ),
+                      );
+                    }),
               )
             ],
           ),
