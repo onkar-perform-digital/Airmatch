@@ -82,7 +82,7 @@ class _CityChatPageState extends State<CityChatPage> {
       ),
       body: Container(
         child: Stack(
-          children: <Widget>[
+          children: [
             _chatMessages(),
             // Container(),
             Container(
@@ -90,22 +90,14 @@ class _CityChatPageState extends State<CityChatPage> {
               width: MediaQuery.of(context).size.width,
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
-                color: Colors.grey[700],
+                color: Color(0xFFF2F2F2),
                 child: Row(
-                  children: <Widget>[
+                  children: [
                     Expanded(
                       child: TextField(
                         controller: messageEditingController,
                         style: TextStyle(
-                          color: Colors.white
-                        ),
-                        decoration: InputDecoration(
-                          hintText: "Send a message ...",
-                          hintStyle: TextStyle(
-                            color: Colors.white38,
-                            fontSize: 16,
-                          ),
-                          border: InputBorder.none
+                          color: Color(0xFFF2F2F2)
                         ),
                       ),
                     ),
@@ -172,11 +164,11 @@ class MessageTile extends StatelessWidget {
             topRight: Radius.circular(23),
             bottomRight: Radius.circular(23)
           ),
-          color: sentByMe ? Colors.blueAccent : Colors.grey[700],
+          color: sentByMe ? Color(0xFF358EE8) : Color(0xFFF2F2F2),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
+          children: [
             Text(sender.toUpperCase(), textAlign: TextAlign.start, style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.bold, color: Colors.black, letterSpacing: -0.5)),
             SizedBox(height: 7.0),
             Text(message, textAlign: TextAlign.start, style: TextStyle(fontSize: 15.0, color: Colors.white)),

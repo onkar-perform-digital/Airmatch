@@ -77,13 +77,13 @@ class _AirportSearchState extends State<AirportSearch> {
                         fontSize: 18.0,
                         fontWeight: FontWeight.bold,
                       ),
-                      onChanged: (String query) {
-                        if (searchController != null) {
-                          setState(() {
-                            getAirports(searchController.text.toString());
-                          });
-                        }
-                      },
+                      // onChanged: (String query) {
+                      //   if (searchController != null) {
+                      //     setState(() {
+                      //       getAirports(searchController.text.toString());
+                      //     });
+                      //   }
+                      // },
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: 'Type search here...',

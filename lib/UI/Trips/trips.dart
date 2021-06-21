@@ -4,6 +4,8 @@ import 'package:am_debug/Services/Database.dart';
 import 'package:am_debug/Services/photos_api.dart';
 import 'package:am_debug/UI/Flight%20GroupChat/chat_page.dart';
 import 'package:am_debug/helpers/constants.dart';
+import 'package:am_debug/helpers/loading.dart';
+import 'package:am_debug/helpers/utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -67,7 +69,7 @@ class _TripState extends State<Trip> {
                     .snapshots(),
                 builder:
                     (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
-                  return ListView.builder(
+                  return streamSnapshot.hasData ? ListView.builder(
                       itemCount: streamSnapshot.data.docs.length,
                       itemBuilder: (context, index) {
                         return tripTile(
@@ -81,7 +83,7 @@ class _TripState extends State<Trip> {
                           streamSnapshot.data.docs[index]['Travelling to'],
                           streamSnapshot.data.docs[index]['Travelling from'],
                         );
-                      });
+                      }) : Loading();
                 },
               ),
             ),
@@ -106,12 +108,9 @@ class _TripState extends State<Trip> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(top: 30, left: 20),
-                        child: Text(
+                        child: largeText(
                           "Add a trip",
-                          style: TextStyle(
-                              color: Color(0xFF358EE8),
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold),
+                          Constants.blueClr,
                         ),
                       )
                     ],
@@ -148,11 +147,11 @@ class _TripState extends State<Trip> {
                 height: 45,
                 child: Row(
                   children: [
-                    Text("$airlineNo"),
+                    smallText("$airlineNo", Constants.blackClr),
                     SizedBox(
                       width: 20,
                     ),
-                    Text("$date"),
+                    smallText("$date", Constants.blackClr),
                     SizedBox(
                       width: MediaQuery.of(context).size.width - 250,
                     ),
@@ -183,8 +182,8 @@ class _TripState extends State<Trip> {
                       if (snapshot.hasData) {
                         return Stack(
                           children: [
-                            Image.network(
-                              snapshot.data,
+                            CachedNetworkImage(
+                              imageUrl: snapshot.data,
                               fit: BoxFit.cover,
                               height: 155,
                               width: MediaQuery.of(context).size.width,
@@ -195,12 +194,6 @@ class _TripState extends State<Trip> {
                                   filter: ImageFilter.blur(
                                       sigmaX: 5.0, sigmaY: 5.0),
                                   child: Container(
-                                    // decoration: BoxDecoration(
-                                    //   image: DecorationImage(
-                                    //     image: NetworkImage(snapshot.data),
-                                    //     fit: BoxFit.cover,
-                                    //   ),
-                                    // ),
                                     height: 155,
                                     width: MediaQuery.of(context).size.width,
                                     child: Row(
@@ -216,15 +209,14 @@ class _TripState extends State<Trip> {
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.center,
                                                 children: [
-                                                  Text(
+                                                  mediumText(
                                                     "$departureAirport",
-                                                    style:
-                                                        TextStyle(fontSize: 16),
+                                                    0xFFFFFFFF,
                                                   ),
                                                   SizedBox(
                                                     height: 10,
                                                   ),
-                                                  Text("Departure"),
+                                                  smallText("Departure", 0XFFFFFFFF),
                                                   SizedBox(
                                                     height: 10,
                                                   ),
@@ -241,9 +233,9 @@ class _TripState extends State<Trip> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.center,
                                             children: [
-                                              Text(
+                                              mediumText(
                                                 "$airlineName",
-                                                style: TextStyle(fontSize: 15),
+                                                0xFFFFFFFF,
                                               ),
                                               //SizedBox(height: 10,),
                                               Text("-------------->"),
@@ -258,14 +250,14 @@ class _TripState extends State<Trip> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.center,
                                             children: [
-                                              Text(
+                                              mediumText(
                                                 "$arrivalAirport",
-                                                style: TextStyle(fontSize: 16),
+                                                0xFFFFFFFF,
                                               ),
                                               SizedBox(
                                                 height: 10,
                                               ),
-                                              Text("Arrival"),
+                                              smallText("Arrival", 0xFFFFFFFF),
                                               SizedBox(
                                                 height: 10,
                                               ),

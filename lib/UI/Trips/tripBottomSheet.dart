@@ -185,14 +185,6 @@ class _TripBottomSheetState extends State<TripBottomSheet> {
                       color: Colors.blue,
                       textColor: Colors.white,
                       onPressed: () async {
-                        // await DatabaseMethods()
-                        //     .uploadTriptoDB(
-                        //         travelDateController.text.toString(),
-                        //         travellingFromController.text.toString(),
-                        //         travellingToController.text.toString(),
-                        //         bookingNoController.text.toString())
-                        //     .then((value) =>
-                        //         Navigator.pop(context, (route) => false));
                         await Navigator.push(
                             context,
                             MaterialPageRoute(

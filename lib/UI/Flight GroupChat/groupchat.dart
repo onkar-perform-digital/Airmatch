@@ -38,7 +38,7 @@ class _GroupChatState extends State<GroupChat> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
+        children: [
           GestureDetector(
             onTap: () {
               _popupDialog(context);

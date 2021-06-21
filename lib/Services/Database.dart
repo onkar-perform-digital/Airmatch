@@ -16,7 +16,7 @@ class DatabaseMethods {
 
   uploadUserInfo(String uid, Map userInfo) async {
     print('$uid');
-    await FirebaseFirestore.instance.collection("users").doc(uid).set(userInfo);
+    await FirebaseFirestore.instance.collection("users").doc(Constants.uid).set(userInfo);
   }
 
   uploadTravelInfo(String uid, Map userInfo, String from, String to,

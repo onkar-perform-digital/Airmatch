@@ -1,4 +1,5 @@
 import 'package:am_debug/Services/Database.dart';
+import 'package:am_debug/helpers/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -76,13 +77,13 @@ class _ChatPageState extends State<ChatPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.groupName, style: TextStyle(color: Colors.white)),
-        centerTitle: true,
-        backgroundColor: Colors.black87,
+        backgroundColor: Color(Constants.blueClr),
         elevation: 0.0,
+        toolbarHeight: 85,
       ),
       body: Container(
         child: Stack(
-          children: <Widget>[
+          children: [
             _chatMessages(),
             // Container(),
             Container(
@@ -90,19 +91,19 @@ class _ChatPageState extends State<ChatPage> {
               width: MediaQuery.of(context).size.width,
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
-                color: Colors.grey[700],
+                color: Color(0xFFF2F2F2),
                 child: Row(
-                  children: <Widget>[
+                  children: [
                     Expanded(
                       child: TextField(
                         controller: messageEditingController,
                         style: TextStyle(
-                          color: Colors.white
+                          color: Color(0xFFF2F2F2)
                         ),
                         decoration: InputDecoration(
-                          hintText: "Send a message ...",
+                          hintText: "Type a message",
                           hintStyle: TextStyle(
-                            color: Colors.white38,
+                            color: Colors.black38,
                             fontSize: 16,
                           ),
                           border: InputBorder.none
@@ -120,7 +121,7 @@ class _ChatPageState extends State<ChatPage> {
                         height: 50.0,
                         width: 50.0,
                         decoration: BoxDecoration(
-                          color: Colors.blueAccent,
+                          color: Color(Constants.blueClr),
                           borderRadius: BorderRadius.circular(50)
                         ),
                         child: Center(child: Icon(Icons.send, color: Colors.white)),
@@ -152,8 +153,8 @@ class MessageTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(
-        top: 4,
-        bottom: 4,
+        top: 10,
+        bottom: 10,
         left: sentByMe ? 0 : 24,
         right: sentByMe ? 24 : 0),
         alignment: sentByMe ? Alignment.centerRight : Alignment.centerLeft,
@@ -172,11 +173,11 @@ class MessageTile extends StatelessWidget {
             topRight: Radius.circular(23),
             bottomRight: Radius.circular(23)
           ),
-          color: sentByMe ? Colors.blueAccent : Colors.grey[700],
+          color: sentByMe ? Color(Constants.blueClr) : Color(0xFFF2F2F2),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
+          children: [
             Text(sender.toUpperCase(), textAlign: TextAlign.start, style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.bold, color: Colors.black, letterSpacing: -0.5)),
             SizedBox(height: 7.0),
             Text(message, textAlign: TextAlign.start, style: TextStyle(fontSize: 15.0, color: Colors.white)),

@@ -24,8 +24,9 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        fontFamily: 'Baloo Tamma 2'
       ),
-      home: DashboardScreen(),
+      home: AppStartAnimation(),
     );
   }
 }

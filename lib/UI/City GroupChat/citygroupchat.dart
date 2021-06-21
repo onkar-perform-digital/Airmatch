@@ -38,7 +38,7 @@ class _CityGroupChatState extends State<CityGroupChat> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
+        children: [
           GestureDetector(
             onTap: () {
               _popupDialog(context);
@@ -46,7 +46,6 @@ class _CityGroupChatState extends State<CityGroupChat> {
             child: Icon(Icons.add_circle, color: Colors.grey[700], size: 75.0)
           ),
           SizedBox(height: 20.0),
-          Text("You've not joined any group, tap on the 'add' icon to create a group or search for groups by tapping on the search button below."),
         ],
       )
     );
@@ -55,35 +54,27 @@ class _CityGroupChatState extends State<CityGroupChat> {
 
 
   Widget groupsList() {
-    return StreamBuilder(
+    StreamBuilder(
       stream: _groups,
       builder: (context, snapshot) {
-        if(snapshot.hasData) {
+        return snapshot.hasData ? {
           if(snapshot.data['City groups'] != null) {
-            print(snapshot.data['City groups'].length);
+            print(snapshot.data['City groups'].length),
             if(snapshot.data['City groups'].length != 0) {
-              return ListView.builder(
+              ListView.builder(
                 itemCount: snapshot.data['City groups'].length,
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   int reqIndex = snapshot.data['City groups'].length - index - 1;
                   return GroupTile(userName: snapshot.data['First name'], groupId: snapshot.data['City groups'][reqIndex], groupName: snapshot.data['City groups'][reqIndex]);
                 }
-              );
+              )
             }
             else {
-              return noGroupWidget();
+              noGroupWidget()
             }
           }
-          else {
-            return noGroupWidget();
-          }
-        }
-        else {
-          return Center(
-            child: CircularProgressIndicator()
-          );
-        }
+        } : Container();
       },
     );
   }
