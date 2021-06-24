@@ -1,4 +1,5 @@
 import 'package:am_debug/Services/Database.dart';
+import 'package:am_debug/helpers/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -77,7 +78,7 @@ class _CityChatPageState extends State<CityChatPage> {
       appBar: AppBar(
         title: Text(widget.groupName, style: TextStyle(color: Colors.white)),
         centerTitle: true,
-        backgroundColor: Colors.black87,
+        backgroundColor: Color(Constants.blueClr),
         elevation: 0.0,
       ),
       body: Container(
@@ -97,7 +98,7 @@ class _CityChatPageState extends State<CityChatPage> {
                       child: TextField(
                         controller: messageEditingController,
                         style: TextStyle(
-                          color: Color(0xFFF2F2F2)
+                          color: Color(0xFF000000)
                         ),
                       ),
                     ),
@@ -171,7 +172,7 @@ class MessageTile extends StatelessWidget {
           children: [
             Text(sender.toUpperCase(), textAlign: TextAlign.start, style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.bold, color: Colors.black, letterSpacing: -0.5)),
             SizedBox(height: 7.0),
-            Text(message, textAlign: TextAlign.start, style: TextStyle(fontSize: 15.0, color: Colors.white)),
+            Text(message, textAlign: TextAlign.start, style: TextStyle(fontSize: 15.0, color: Colors.purple)),
           ],
         ),
       ),

@@ -97,6 +97,8 @@ class _FlightsListState extends State<FlightsList> {
       String departureTime}) {
     return GestureDetector(
       onTap: () async {
+        await DatabaseMethods().createCityGroup(Constants.uid, widget.arrivalAirport);
+        await DatabaseMethods().createCityGroup(Constants.uid, widget.departureAirport);
         await DatabaseMethods()
             .uploadTriptoDB(
               widget.date.toString(),

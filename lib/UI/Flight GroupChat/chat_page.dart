@@ -2,6 +2,7 @@ import 'package:am_debug/Services/Database.dart';
 import 'package:am_debug/helpers/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:am_debug/helpers/members_list.dart';
 
 class ChatPage extends StatefulWidget {
 
@@ -80,6 +81,16 @@ class _ChatPageState extends State<ChatPage> {
         backgroundColor: Color(Constants.blueClr),
         elevation: 0.0,
         toolbarHeight: 85,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 20),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => MembersList(grpname: widget.groupName)));
+              },
+              child: Icon(Icons.people)),
+          )
+        ],
       ),
       body: Container(
         child: Stack(

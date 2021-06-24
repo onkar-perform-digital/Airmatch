@@ -42,6 +42,11 @@ class _DashboardScreenState extends State<DashboardScreen>
     print(Constants.uid);
   }
 
+    getPhoneNo() async {
+    Constants.phoneno = await HelperFunctions.getPhonenoPreferenceKey();
+    print(Constants.phoneno);
+  }
+
   Future<DocumentSnapshot> getData() async {
     await Firebase.initializeApp();
     return await FirebaseFirestore.instance
@@ -50,8 +55,8 @@ class _DashboardScreenState extends State<DashboardScreen>
         .get();
   }
 
-  getUsername() {
-    getData().then((value) {
+  getUsername() async{
+     await getData().then((value) {
       Constants.myname = value.data()["First name"];
       print(Constants.myname);
     });
@@ -60,6 +65,7 @@ class _DashboardScreenState extends State<DashboardScreen>
   @override
   Widget build(BuildContext context) {
     getUid();
+    getPhoneNo();
     return DefaultTabController(
         length: 3,
         initialIndex: widget.pageIndex,

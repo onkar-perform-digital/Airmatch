@@ -27,6 +27,7 @@ class _CityGroupChatState extends State<CityGroupChat> {
   @override
   void initState() {
     super.initState();
+    print("Initiated");
     _getUserAuthAndJoinedGroups();
   }
 
@@ -51,33 +52,6 @@ class _CityGroupChatState extends State<CityGroupChat> {
     );
   }
 
-
-
-  Widget groupsList() {
-    StreamBuilder(
-      stream: _groups,
-      builder: (context, snapshot) {
-        return snapshot.hasData ? {
-          if(snapshot.data['City groups'] != null) {
-            print(snapshot.data['City groups'].length),
-            if(snapshot.data['City groups'].length != 0) {
-              ListView.builder(
-                itemCount: snapshot.data['City groups'].length,
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  int reqIndex = snapshot.data['City groups'].length - index - 1;
-                  return GroupTile(userName: snapshot.data['First name'], groupId: snapshot.data['City groups'][reqIndex], groupName: snapshot.data['City groups'][reqIndex]);
-                }
-              )
-            }
-            else {
-              noGroupWidget()
-            }
-          }
-        } : Container();
-      },
-    );
-  }
 
 
   // functions
@@ -154,7 +128,30 @@ class _CityGroupChatState extends State<CityGroupChat> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: groupsList(),
+      body: StreamBuilder(
+      stream: _groups,
+      builder: (context, snapshot) {
+        if(snapshot.hasData) {
+          print(snapshot.data);
+          if(snapshot.data['City groups'] != null) {
+            print(snapshot.data['City groups'].length);
+            if(snapshot.data['City groups'].length != 0) {
+              return ListView.builder(
+                itemCount: snapshot.data['City groups'].length,
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  int reqIndex = snapshot.data['City groups'].length - index - 1;
+                  return GroupTile(userName: snapshot.data['First name'], groupId: snapshot.data['City groups'][reqIndex], groupName: snapshot.data['City groups'][reqIndex]);
+                }
+              );
+            }
+            else {
+              noGroupWidget();
+            }
+          } else Container(child: Text("null data"),);
+        } else Container(child: Text("No data"),);
+      },
+    ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           _popupDialog(context);

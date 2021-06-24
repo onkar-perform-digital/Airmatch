@@ -21,6 +21,7 @@ AutoSizeText mediumText(String text, var color) {
         color: Color(color),
       ),
       minFontSize: 10,
+      overflow: TextOverflow.ellipsis,
       );
 }
 

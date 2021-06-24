@@ -53,12 +53,6 @@ class _TripState extends State<Trip> {
     );
   }
 
-  // @override
-  // void initState() {
-  //   doesGroupAlreadyExist("nova");
-  //   super.initState();
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

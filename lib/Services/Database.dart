@@ -16,7 +16,10 @@ class DatabaseMethods {
 
   uploadUserInfo(String uid, Map userInfo) async {
     print('$uid');
-    await FirebaseFirestore.instance.collection("users").doc(Constants.uid).set(userInfo);
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(Constants.uid)
+        .set(userInfo);
   }
 
   uploadTravelInfo(String uid, Map userInfo, String from, String to,
@@ -180,16 +183,26 @@ class DatabaseMethods {
         FirebaseFirestore.instance.collection('groups').doc(grpName);
 
     List<dynamic> groups = await userDocSnapshot.data()['groups'];
-  if(groups.length!=0) {
-    if (groups.contains(grpName)==true) {
-      //print('hey');
-      await userDocRef.update({
-        'groups': FieldValue.arrayRemove([grpName])
-      });
+    if (groups.length != 0) {
+      if (groups.contains(grpName) == true) {
+        //print('hey');
+        await userDocRef.update({
+          'groups': FieldValue.arrayUnion([grpName])
+        });
 
-      await groupDocRef.update({
-        'members': FieldValue.arrayRemove([Constants.uid + '_' + userName])
-      });
+        await groupDocRef.update({
+          'members': FieldValue.arrayUnion([Constants.uid + '_' + userName])
+        });
+      } else {
+        //print('nay');
+        await userDocRef.update({
+          'groups': FieldValue.arrayUnion([grpName])
+        });
+
+        await groupDocRef.update({
+          'members': FieldValue.arrayUnion([Constants.uid + '_' + userName])
+        });
+      }
     } else {
       //print('nay');
       await userDocRef.update({
@@ -200,17 +213,6 @@ class DatabaseMethods {
         'members': FieldValue.arrayUnion([Constants.uid + '_' + userName])
       });
     }
-  } else {
-      //print('nay');
-      await userDocRef.update({
-        'groups': FieldValue.arrayUnion([grpName])
-      });
-
-      await groupDocRef.update({
-        'members': FieldValue.arrayUnion([Constants.uid + '_' + userName])
-      });
-    }
-
   }
 
   // toggling the user group join
@@ -234,7 +236,7 @@ class DatabaseMethods {
   //     await groupDocRef.update({
   //       'members': FieldValue.arrayRemove([Constants.uid + '_' + userName])
   //     });
-  //  } 
+  //  }
   // }
 
   // has user joined the group
@@ -306,9 +308,12 @@ class DatabaseMethods {
         .get();
   }
 
-    // create group
+  // create group
   Future createCityGroup(String userName, String groupName) async {
-    await FirebaseFirestore.instance.collection('City groups').doc(groupName).set({
+    await FirebaseFirestore.instance
+        .collection('City groups')
+        .doc(groupName)
+        .set({
       'groupName': groupName,
       'groupIcon': '',
       'admin': userName,
@@ -365,7 +370,7 @@ class DatabaseMethods {
     }
   }
 
-    Future<bool> isUserJoinedinCityGrp(
+  Future<bool> isUserJoinedinCityGrp(
       String groupId, String groupName, String userName) async {
     DocumentReference userDocRef =
         FirebaseFirestore.instance.collection('users').doc(Constants.uid);

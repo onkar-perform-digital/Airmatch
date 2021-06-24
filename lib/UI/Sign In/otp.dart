@@ -169,6 +169,10 @@ class _OTPScreenState extends State<OTPScreen> {
                                             .instance.currentUser.uid;
                                         HelperFunctions.saveUidPreferenceKey(
                                             Constants.uid);
+                                        Constants.phoneno =
+                                                  widget.phone.toString();
+                                            HelperFunctions.savePhonenoPreferenceKey(
+                                            Constants.phoneno);
                                       });
                                     } catch (e) {
                                       _loading = false;
@@ -302,7 +306,8 @@ class _OTPScreenState extends State<OTPScreen> {
                       MaterialPageRoute(
                           builder: (context) => DashboardScreen(1)),
                       (route) => false);
-                  Constants.phoneno = widget.phone.toString();
+                  HelperFunctions.savePhonenoPreferenceKey(widget.phone.toString());
+                  print("Shared Pref: ${HelperFunctions.getPhonenoPreferenceKey()}");
                 } else {
                   Navigator.pushAndRemoveUntil(
                       context,
@@ -311,7 +316,8 @@ class _OTPScreenState extends State<OTPScreen> {
                                 phone: widget.phone,
                               )),
                       (route) => false);
-                  Constants.phoneno = widget.phone.toString();
+                  HelperFunctions.savePhonenoPreferenceKey(widget.phone.toString());
+                  print("Shared Pref: ${HelperFunctions.getPhonenoPreferenceKey()}");
                 }
               });
             }

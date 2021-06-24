@@ -46,7 +46,6 @@ class _GroupChatState extends State<GroupChat> {
             child: Icon(Icons.add_circle, color: Colors.grey[700], size: 75.0)
           ),
           SizedBox(height: 20.0),
-          Text("You've not joined any group, tap on the 'add' icon to create a group or search for groups by tapping on the search button below."),
         ],
       )
     );
