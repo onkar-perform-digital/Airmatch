@@ -73,6 +73,7 @@ class DatabaseMethods {
         "Profile Image URL": profileUrl.toString(),
         "Phone Number": phone.toString(),
         "PhoneNo cases": setSearchParam(phone.toString()),
+        "groups": [],
       };
 
       await DatabaseMethods().uploadUserInfo(uid, userInfoMap);
@@ -170,7 +171,7 @@ class DatabaseMethods {
     });
   }
 
-  Future joinGrp(String userName, String grpName) async {
+  Future joinGrp(String userName, var grpName) async {
     DocumentReference userDocRef =
         FirebaseFirestore.instance.collection('users').doc(Constants.uid);
     DocumentSnapshot userDocSnapshot = await userDocRef.get();
@@ -179,8 +180,8 @@ class DatabaseMethods {
         FirebaseFirestore.instance.collection('groups').doc(grpName);
 
     List<dynamic> groups = await userDocSnapshot.data()['groups'];
-
-    if (groups.contains(grpName)) {
+  if(groups.length!=0) {
+    if (groups.contains(grpName)==true) {
       //print('hey');
       await userDocRef.update({
         'groups': FieldValue.arrayRemove([grpName])
@@ -199,6 +200,17 @@ class DatabaseMethods {
         'members': FieldValue.arrayUnion([Constants.uid + '_' + userName])
       });
     }
+  } else {
+      //print('nay');
+      await userDocRef.update({
+        'groups': FieldValue.arrayUnion([grpName])
+      });
+
+      await groupDocRef.update({
+        'members': FieldValue.arrayUnion([Constants.uid + '_' + userName])
+      });
+    }
+
   }
 
   // toggling the user group join
@@ -222,16 +234,7 @@ class DatabaseMethods {
   //     await groupDocRef.update({
   //       'members': FieldValue.arrayRemove([Constants.uid + '_' + userName])
   //     });
-  //   } else {
-  //     //print('nay');
-  //     await userDocRef.update({
-  //       'groups': FieldValue.arrayUnion([groupId + '_' + groupName])
-  //     });
-
-  //     await groupDocRef.update({
-  //       'members': FieldValue.arrayUnion([Constants.uid + '_' + userName])
-  //     });
-  //   }
+  //  } 
   // }
 
   // has user joined the group

@@ -6,7 +6,6 @@ import 'package:am_debug/UI/Flight%20GroupChat/chat_page.dart';
 import 'package:am_debug/helpers/constants.dart';
 import 'package:am_debug/helpers/loading.dart';
 import 'package:am_debug/helpers/utils.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:am_debug/UI/Trips/tripBottomSheet.dart';
@@ -44,6 +43,16 @@ class _TripState extends State<Trip> {
     return res;
   }
 
+  getMembersCount(String grpName) {
+    return StreamBuilder(
+      stream: FirebaseFirestore.instance.collection("groups").doc(grpName).snapshots(),
+      builder: (context, snapshot) {
+        List<dynamic> array = snapshot.data["members"];
+        return snapshot.hasData ? mediumText("${array.length} members", Constants.blackClr) : Text("loading");
+      }
+    );
+  }
+
   // @override
   // void initState() {
   //   doesGroupAlreadyExist("nova");
@@ -69,21 +78,24 @@ class _TripState extends State<Trip> {
                     .snapshots(),
                 builder:
                     (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
-                  return streamSnapshot.hasData ? ListView.builder(
-                      itemCount: streamSnapshot.data.docs.length,
-                      itemBuilder: (context, index) {
-                        return tripTile(
-                          streamSnapshot.data.docs[index]['Airline Name'],
-                          streamSnapshot.data.docs[index]['Airline No'],
-                          streamSnapshot.data.docs[index]
-                              ['Flight Arrival time'],
-                          streamSnapshot.data.docs[index]
-                              ['Flight Departure time'],
-                          streamSnapshot.data.docs[index]['Date'],
-                          streamSnapshot.data.docs[index]['Travelling to'],
-                          streamSnapshot.data.docs[index]['Travelling from'],
-                        );
-                      }) : Loading();
+                  return streamSnapshot.hasData
+                      ? ListView.builder(
+                          itemCount: streamSnapshot.data.docs.length,
+                          itemBuilder: (context, index) {
+                            return tripTile(
+                              streamSnapshot.data.docs[index]['Airline Name'],
+                              streamSnapshot.data.docs[index]['Airline No'],
+                              streamSnapshot.data.docs[index]
+                                  ['Flight Arrival time'],
+                              streamSnapshot.data.docs[index]
+                                  ['Flight Departure time'],
+                              streamSnapshot.data.docs[index]['Date'],
+                              streamSnapshot.data.docs[index]['Travelling to'],
+                              streamSnapshot.data.docs[index]
+                                  ['Travelling from'],
+                            );
+                          })
+                      : Loading();
                 },
               ),
             ),
@@ -156,7 +168,7 @@ class _TripState extends State<Trip> {
                       width: MediaQuery.of(context).size.width - 250,
                     ),
                     //TODO
-                    // Text("${FirebaseFirestore.instance.collection('groups').doc('$date : $airlineNo')}"),
+                    getMembersCount("$date : $airlineNo"),
                   ],
                 ),
               ),
@@ -164,192 +176,139 @@ class _TripState extends State<Trip> {
                 onTap: () async {
                   var grpname = "$date : $airlineNo";
                   if (await doesGroupAlreadyExist(grpname) == true) {
-                    DatabaseMethods().joinGrp(Constants.myname, grpname);
+                    await DatabaseMethods()
+                        .joinGrp(Constants.myname, grpname)
+                        .whenComplete(() {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ChatPage(
+                                  groupId: grpname,
+                                  groupName: grpname,
+                                  userName: Constants.myname)));
+                    });
                   } else {
-                    DatabaseMethods().createGroup(Constants.myname, grpname);
+                    await DatabaseMethods()
+                        .createGroup(Constants.myname, grpname)
+                        .whenComplete(() {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ChatPage(
+                                  groupId: grpname,
+                                  groupName: grpname,
+                                  userName: Constants.myname)));
+                    });
                   }
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ChatPage(
-                              groupId: grpname,
-                              groupName: grpname,
-                              userName: Constants.myname)));
                 },
                 child: FutureBuilder<String>(
                     future: getImgUrl(arrivalAirport.toString()),
                     builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        return Stack(
-                          children: [
-                            CachedNetworkImage(
-                              imageUrl: snapshot.data,
-                              fit: BoxFit.cover,
-                              height: 155,
-                              width: MediaQuery.of(context).size.width,
-                            ),
-                            Container(
-                              child: ClipRRect(
-                                child: BackdropFilter(
-                                  filter: ImageFilter.blur(
-                                      sigmaX: 5.0, sigmaY: 5.0),
-                                  child: Container(
-                                    height: 155,
-                                    width: MediaQuery.of(context).size.width,
-                                    child: Row(
-                                      //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Expanded(
-                                          child: Container(
-                                              padding:
-                                                  EdgeInsets.only(left: 10),
-                                              child: Column(
+                      return snapshot.hasData
+                          ? Stack(
+                              children: [
+                                Image.network(
+                                  snapshot.data,
+                                  fit: BoxFit.fitWidth,
+                                  height: 150,
+                                  width: MediaQuery.of(context).size.width,
+                                ),
+                                Container(
+                                  child: ClipRRect(
+                                    child: BackdropFilter(
+                                      filter: ImageFilter.blur(
+                                          sigmaX: 5.0, sigmaY: 5.0),
+                                      child: Container(
+                                        height: 155,
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        child: Row(
+                                          //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            Expanded(
+                                              child: Container(
+                                                  padding:
+                                                      EdgeInsets.only(left: 10),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      mediumText(
+                                                        "$departureAirport",
+                                                        0xFFFFFFFF,
+                                                      ),
+                                                      SizedBox(
+                                                        height: 10,
+                                                      ),
+                                                      smallText("Departure",
+                                                          0XFFFFFFFF),
+                                                      SizedBox(
+                                                        height: 10,
+                                                      ),
+                                                      mediumText(
+                                                          "${departureTime.substring(11, 16)}",
+                                                          0xFFFFFFFF)
+                                                    ],
+                                                  )),
+                                            ),
+                                            Expanded(
+                                              child: Container(
+                                                  //color: Colors.blue,
+                                                  child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  mediumText(
+                                                    "$airlineName",
+                                                    0xFFFFFFFF,
+                                                  ),
+                                                  //SizedBox(height: 10,),
+                                                  Text("-------------->"),
+                                                ],
+                                              )),
+                                            ),
+                                            Expanded(
+                                              child: Container(
+                                                  child: Column(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.center,
                                                 children: [
                                                   mediumText(
-                                                    "$departureAirport",
+                                                    "$arrivalAirport",
                                                     0xFFFFFFFF,
                                                   ),
                                                   SizedBox(
                                                     height: 10,
                                                   ),
-                                                  smallText("Departure", 0XFFFFFFFF),
+                                                  smallText(
+                                                      "Arrival", 0xFFFFFFFF),
                                                   SizedBox(
                                                     height: 10,
                                                   ),
-                                                  Text("1:15pm")
+                                                  mediumText(
+                                                      "${arrivalTime.substring(11, 16)}",
+                                                      0xFFFFFFFF)
                                                 ],
                                               )),
+                                            ),
+                                            
+                                          ],
                                         ),
-                                        Expanded(
-                                          child: Container(
-                                              //color: Colors.blue,
-                                              child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              mediumText(
-                                                "$airlineName",
-                                                0xFFFFFFFF,
-                                              ),
-                                              //SizedBox(height: 10,),
-                                              Text("-------------->"),
-                                            ],
-                                          )),
-                                        ),
-                                        Expanded(
-                                          child: Container(
-                                              child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              mediumText(
-                                                "$arrivalAirport",
-                                                0xFFFFFFFF,
-                                              ),
-                                              SizedBox(
-                                                height: 10,
-                                              ),
-                                              smallText("Arrival", 0xFFFFFFFF),
-                                              SizedBox(
-                                                height: 10,
-                                              ),
-                                              Text("3:15pm")
-                                            ],
-                                          )),
-                                        ),
-                                      ],
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ),
-                          ],
-                        );
-                      }
-                      return Container(
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: NetworkImage(
-                                "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/1200px-No_image_3x4.svg.png"),
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                        height: 155,
-                        width: MediaQuery.of(context).size.width,
-                        child: Row(
-                          //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Expanded(
-                              child: Container(
-                                  padding: EdgeInsets.only(left: 10),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        "$departureAirport",
-                                        style: TextStyle(fontSize: 16),
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text("Departure"),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text("1:15pm")
-                                    ],
-                                  )),
-                            ),
-                            Expanded(
-                              child: Container(
-                                  //color: Colors.blue,
-                                  child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "$airlineName",
-                                    style: TextStyle(fontSize: 15),
-                                  ),
-                                  //SizedBox(height: 10,),
-                                  Text("-------------->"),
-                                ],
-                              )),
-                            ),
-                            Expanded(
-                              child: Container(
-                                  child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "$arrivalAirport",
-                                    style: TextStyle(fontSize: 16),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text("Arrival"),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text("3:15pm")
-                                ],
-                              )),
-                            ),
-                          ],
-                        ),
-                      );
+                              ],
+                            )
+                          : Loading();
                     }),
               )
             ],

@@ -65,7 +65,7 @@ class _AddProfilePictureState extends State<AddProfilePicture> {
               imageUrl.toString(), widget.uid, widget.phone)
           .then((value) => Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(builder: (context) => DashboardScreen(2)),
+              MaterialPageRoute(builder: (context) => DashboardScreen(1)),
               (route) => false));
     }
   }

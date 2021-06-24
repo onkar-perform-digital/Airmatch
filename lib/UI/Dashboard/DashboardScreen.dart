@@ -2,6 +2,7 @@ import 'package:am_debug/UI/Dashboard/Profilepage.dart';
 import 'package:am_debug/UI/City GroupChat/citygroupchat.dart';
 import 'package:am_debug/UI/one-to-one%20chatting/Chat.dart';
 import 'package:am_debug/helpers/constants.dart';
+import 'package:am_debug/helpers/helperfunctions.dart';
 import 'package:am_debug/helpers/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -20,7 +21,7 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen>
     with TickerProviderStateMixin {
-  String uid = "";
+  //String uid = "";
   String profilePicUrl;
   String name;
 
@@ -29,9 +30,16 @@ class _DashboardScreenState extends State<DashboardScreen>
   @override
   void initState() {
     super.initState();
-    //getNameAndProfilepic();
-    //uid = FirebaseAuth.instance.currentUser.uid;
     _tabController = new TabController(length: 3, vsync: this);
+    HelperFunctions.saveUserLoggedInPreferenceKey(true);
+    print(Constants.uid);
+
+    getUsername();
+  }
+
+  getUid() async {
+    Constants.uid = await HelperFunctions.getUidPreferenceKey();
+    print(Constants.uid);
   }
 
   Future<DocumentSnapshot> getData() async {
@@ -42,8 +50,16 @@ class _DashboardScreenState extends State<DashboardScreen>
         .get();
   }
 
+  getUsername() {
+    getData().then((value) {
+      Constants.myname = value.data()["First name"];
+      print(Constants.myname);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    getUid();
     return DefaultTabController(
         length: 3,
         initialIndex: widget.pageIndex,
@@ -78,25 +94,34 @@ class _DashboardScreenState extends State<DashboardScreen>
             builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
                 Constants.myname = snapshot.data.data()['First name'];
+                print(Constants.myname);
                 return Drawer(
                     elevation: 1.5,
                     child: Column(children: [
-                      DrawerHeader(
-                        child: Row(children: [
-                          Container(
-                              height: 80,
-                              width: 80,
-                              child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(50),
-                                  child: Image.network(
-                                    "${snapshot.data.data()['Profile Image URL']}",
-                                    fit: BoxFit.cover,
-                                  ))),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Text("${snapshot.data.data()['First name']}")
-                        ]),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ProfilePage()));
+                        },
+                        child: DrawerHeader(
+                          child: Row(children: [
+                            Container(
+                                height: 80,
+                                width: 80,
+                                child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(50),
+                                    child: Image.network(
+                                      "${snapshot.data.data()['Profile Image URL']}",
+                                      fit: BoxFit.cover,
+                                    ))),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text("${snapshot.data.data()['First name']}")
+                          ]),
+                        ),
                       ),
                       Expanded(
                           child: ListView(
@@ -129,6 +154,9 @@ class _DashboardScreenState extends State<DashboardScreen>
                           leading: Icon(Icons.exit_to_app),
                           onTap: () async {
                             await FirebaseAuth.instance.signOut();
+                            HelperFunctions.saveUserLoggedInPreferenceKey(
+                                false);
+                            HelperFunctions.saveUidPreferenceKey("");
                             Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(

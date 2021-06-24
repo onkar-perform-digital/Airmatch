@@ -1,4 +1,6 @@
+import 'package:am_debug/UI/Dashboard/DashboardScreen.dart';
 import 'package:am_debug/UI/Sign%20In/LoginScreen.dart';
+import 'package:am_debug/helpers/helperfunctions.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import "dart:async";
@@ -23,11 +25,34 @@ class _AppStartAnimationState extends State<AppStartAnimation> {
     return new Timer(duration, route);
   }
 
-  route() {
-    Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (context) => LoginScreen()),
-        (route) => false);
+  bool _isLoggedIn = false;
+
+  route() async {
+
+            // Navigator.pushAndRemoveUntil(
+            // context,
+            // MaterialPageRoute(builder: (context) => LoginScreen()),
+            // (route) => false);
+
+    await HelperFunctions.getUserLoggedInPreferenceKey().then((value) {
+      if (value != null) {
+        setState(() {
+          _isLoggedIn = value;
+        });
+      }
+
+      if (_isLoggedIn == true) {
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => DashboardScreen(1)),
+            (route) => false);
+      } else {
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => LoginScreen()),
+            (route) => false);
+      }
+    });
   }
 
   @override

@@ -84,8 +84,9 @@ class _ChatPageState extends State<ChatPage> {
       body: Container(
         child: Stack(
           children: [
-            _chatMessages(),
-            // Container(),
+            Container(
+              height: MediaQuery.of(context).size.height-200,
+              child: _chatMessages()),
             Container(
               alignment: Alignment.bottomCenter,
               width: MediaQuery.of(context).size.width,
@@ -98,7 +99,7 @@ class _ChatPageState extends State<ChatPage> {
                       child: TextField(
                         controller: messageEditingController,
                         style: TextStyle(
-                          color: Color(0xFFF2F2F2)
+                          color: Colors.black
                         ),
                         decoration: InputDecoration(
                           hintText: "Type a message",
@@ -180,7 +181,7 @@ class MessageTile extends StatelessWidget {
           children: [
             Text(sender.toUpperCase(), textAlign: TextAlign.start, style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.bold, color: Colors.black, letterSpacing: -0.5)),
             SizedBox(height: 7.0),
-            Text(message, textAlign: TextAlign.start, style: TextStyle(fontSize: 15.0, color: Colors.white)),
+            Text(message, textAlign: TextAlign.start, style: TextStyle(fontSize: 15.0, color: Colors.purple)),
           ],
         ),
       ),

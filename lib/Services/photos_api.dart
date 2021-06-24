@@ -11,11 +11,11 @@ class PhotosApi {
   String apikey = "AIzaSyAWpD13FVr-fXe27uje9p2V-fpbea7r_G0";
 
   Future<String> getImgUrl(String cityName) async {
-    String url = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=$cityName&key=$apikey&inputtype=textquery&fields=name,photos";
+    String apiurl = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=$cityName&key=$apikey&inputtype=textquery&fields=name,photos";
 
     
 
-    var response = await http.get(url);
+    var response = await http.get(apiurl);
     var jsonData = jsonDecode(response.body);
 
     print(jsonData);
