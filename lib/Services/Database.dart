@@ -182,7 +182,7 @@ class DatabaseMethods {
     DocumentReference groupDocRef =
         FirebaseFirestore.instance.collection('groups').doc(grpName);
 
-    List<dynamic> groups = await userDocSnapshot.data()['groups'];
+    List<dynamic> groups = await (userDocSnapshot.data() as Map)['groups'];
     if (groups.length != 0) {
       if (groups.contains(grpName) == true) {
         //print('hey');
@@ -246,7 +246,7 @@ class DatabaseMethods {
         FirebaseFirestore.instance.collection('users').doc(Constants.uid);
     DocumentSnapshot userDocSnapshot = await userDocRef.get();
 
-    List<dynamic> groups = await userDocSnapshot.data()['groups'];
+    List<dynamic> groups = await (userDocSnapshot.data() as Map)['groups'];
 
     if (groups.contains(groupId + '_' + groupName)) {
       //print('he');
@@ -347,7 +347,7 @@ class DatabaseMethods {
     DocumentReference groupDocRef =
         FirebaseFirestore.instance.collection('City groups').doc(grpName);
 
-    List<dynamic> groups = await userDocSnapshot.data()['groups'];
+    List<dynamic> groups = await (userDocSnapshot.data() as Map)['groups'];
 
     if (groups.contains(grpName)) {
       //print('hey');
@@ -376,7 +376,7 @@ class DatabaseMethods {
         FirebaseFirestore.instance.collection('users').doc(Constants.uid);
     DocumentSnapshot userDocSnapshot = await userDocRef.get();
 
-    List<dynamic> groups = await userDocSnapshot.data()['City groups'];
+    List<dynamic> groups = await (userDocSnapshot.data() as Map)['City groups'];
 
     if (groups.contains(groupId + '_' + groupName)) {
       //print('he');

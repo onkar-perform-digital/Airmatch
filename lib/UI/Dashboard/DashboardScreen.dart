@@ -57,7 +57,7 @@ class _DashboardScreenState extends State<DashboardScreen>
 
   getUsername() async{
      await getData().then((value) {
-      Constants.myname = value.data()["First name"];
+      Constants.myname = (value.data() as Map)["First name"];
       print(Constants.myname);
     });
   }
@@ -99,7 +99,7 @@ class _DashboardScreenState extends State<DashboardScreen>
             future: getData(),
             builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
-                Constants.myname = snapshot.data.data()['First name'];
+                Constants.myname = (snapshot.data.data() as Map)['First name'];
                 print(Constants.myname);
                 return Drawer(
                     elevation: 1.5,
@@ -119,13 +119,13 @@ class _DashboardScreenState extends State<DashboardScreen>
                                 child: ClipRRect(
                                     borderRadius: BorderRadius.circular(50),
                                     child: Image.network(
-                                      "${snapshot.data.data()['Profile Image URL']}",
+                                      "${(snapshot.data.data() as Map)['Profile Image URL']}",
                                       fit: BoxFit.cover,
                                     ))),
                             SizedBox(
                               width: 10,
                             ),
-                            Text("${snapshot.data.data()['First name']}")
+                            Text("${(snapshot.data.data() as Map)['First name']}")
                           ]),
                         ),
                       ),

@@ -26,7 +26,7 @@ class _FlightsListState extends State<FlightsList> {
 
   Future<void> getAirlines() async {
     flights = [];
-    var response = await http.get(url);
+    var response = await http.get(Uri.parse(url));
     //print(response);
 
     var jsonData = jsonDecode(response.body);

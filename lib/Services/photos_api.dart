@@ -15,7 +15,7 @@ class PhotosApi {
 
     
 
-    var response = await http.get(apiurl);
+    var response = await http.get(Uri.parse(apiurl));
     var jsonData = jsonDecode(response.body);
 
     print(jsonData);
