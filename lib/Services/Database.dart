@@ -77,6 +77,8 @@ class DatabaseMethods {
         "Phone Number": phone.toString(),
         "PhoneNo cases": setSearchParam(phone.toString()),
         "groups": [],
+        "status": "",
+        "City groups": [],
       };
 
       await DatabaseMethods().uploadUserInfo(uid, userInfoMap);

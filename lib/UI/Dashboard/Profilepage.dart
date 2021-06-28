@@ -120,8 +120,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                               enabled: true,
                                               filled: true,
                                               border: InputBorder.none,
-                                              hintText:
-                                                  "Enter your status here",
+                                              hintText: doc["status"] != "" ? doc["status"] : "Enter your status here",
                                               hintStyle: TextStyle(
                                                 fontStyle: FontStyle.italic,
                                               )),
