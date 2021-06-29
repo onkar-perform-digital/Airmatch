@@ -1,5 +1,7 @@
 import 'package:am_debug/Services/Database.dart';
+import 'package:am_debug/Services/analytics_service.dart';
 import 'package:am_debug/helpers/constants.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +28,7 @@ class _CityGroupChatState extends State<CityGroupChat> {
   // initState
   @override
   void initState() {
+    FirebaseAnalytics().setCurrentScreen(screenName: 'City Grp Chat');
     super.initState();
     print("Initiated");
     _getUserAuthAndJoinedGroups();
@@ -164,7 +167,8 @@ class GroupTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: (){
+      onTap: ()async {
+        await AnalyticsService().grpViews(groupName, Constants.uid);
         Navigator.push(context, MaterialPageRoute(builder: (context) => CityChatPage(groupId: groupName, userName: userName, groupName: groupName,)));
       },
       child: Container(
@@ -176,7 +180,6 @@ class GroupTile extends StatelessWidget {
             child: Text(groupName.substring(0, 1).toUpperCase(), textAlign: TextAlign.center, style: TextStyle(color: Colors.white)),
           ),
           title: Text(groupName, style: TextStyle(fontWeight: FontWeight.bold)),
-          subtitle: Text("Join the conversation as $userName", style: TextStyle(fontSize: 13.0)),
         ),
       ),
     );

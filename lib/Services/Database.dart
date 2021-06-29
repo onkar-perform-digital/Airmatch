@@ -1,6 +1,7 @@
 import 'package:am_debug/helpers/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:stream_chat_flutter/stream_chat_flutter.dart' as st;
 
 class DatabaseMethods {
   Future<User> getCurrentUser() async {
@@ -64,6 +65,14 @@ class DatabaseMethods {
       print(output.toString());
       return output;
     }
+    final user = st.User(id: fname.toString(), extraData: {
+      "name": "${fname.toString()}+${lname.toString()}", 
+      "image": profileUrl.toString(), 
+    }); 
+
+    await Constants.client.connectUser(user, Constants.client.devToken(fname.toString())); 
+    print("ID: ${Constants.client.token}");
+
 
     if (uid != null) {
       Constants.uid = uid;
@@ -79,6 +88,7 @@ class DatabaseMethods {
         "groups": [],
         "status": "",
         "City groups": [],
+        "Stream Id": Constants.client.token,
       };
 
       await DatabaseMethods().uploadUserInfo(uid, userInfoMap);

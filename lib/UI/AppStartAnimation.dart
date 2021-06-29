@@ -44,12 +44,12 @@ class _AppStartAnimationState extends State<AppStartAnimation> {
       if (_isLoggedIn == true) {
         Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => DashboardScreen(1)),
+            MaterialPageRoute(builder: (context) => DashboardScreen(1), settings: RouteSettings(name: 'Dashboard Screen')),
             (route) => false);
       } else {
         Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => LoginScreen()),
+            MaterialPageRoute(builder: (context) => LoginScreen(), settings: RouteSettings(name: 'Login Screen')),
             (route) => false);
       }
     });

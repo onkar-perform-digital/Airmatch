@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:am_debug/Services/Database.dart';
+import 'package:am_debug/Services/analytics_service.dart';
 import 'package:am_debug/UI/Dashboard/DashboardScreen.dart';
 import 'package:am_debug/helpers/loading.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -60,12 +61,13 @@ class _AddProfilePictureState extends State<AddProfilePicture> {
           print(e);
         }
       });
+      await AnalyticsService().logImageAdded(hasImage: true);
       await DatabaseMethods()
           .uploadtoDB(widget.fname, widget.lname, widget.gender, widget.dob,
               imageUrl.toString(), widget.uid, widget.phone)
           .then((value) => Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(builder: (context) => DashboardScreen(1)),
+              MaterialPageRoute(builder: (context) => DashboardScreen(1), settings: RouteSettings(name: 'Dashboard Screen')),
               (route) => false));
     }
   }
@@ -99,7 +101,7 @@ class _AddProfilePictureState extends State<AddProfilePicture> {
                               .then((value) => Navigator.pushAndRemoveUntil(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => DashboardScreen(1)),
+                                      builder: (context) => DashboardScreen(1), settings: RouteSettings(name: 'Dashboard Screen')),
                                   (route) => false));
                             },
                             child: Text(

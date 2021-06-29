@@ -1,3 +1,4 @@
+import 'package:am_debug/Services/analytics_service.dart';
 import 'package:am_debug/UI/Dashboard/Profilepage.dart';
 import 'package:am_debug/UI/City GroupChat/citygroupchat.dart';
 import 'package:am_debug/UI/one-to-one%20chatting/Chat.dart';
@@ -109,7 +110,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => ProfilePage()));
+                                  builder: (context) => ProfilePage(), settings: RouteSettings(name: 'Profile Screen')));
                         },
                         child: DrawerHeader(
                           child: Row(children: [
@@ -160,13 +161,14 @@ class _DashboardScreenState extends State<DashboardScreen>
                           leading: Icon(Icons.exit_to_app),
                           onTap: () async {
                             await FirebaseAuth.instance.signOut();
+                            await AnalyticsService().userSignedOut(Constants.uid);
                             HelperFunctions.saveUserLoggedInPreferenceKey(
                                 false);
                             HelperFunctions.saveUidPreferenceKey("");
                             Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => LoginScreen()),
+                                    builder: (context) => LoginScreen(), settings: RouteSettings(name: 'Login Screen')),
                                 (route) => false);
                           })
                     ]));

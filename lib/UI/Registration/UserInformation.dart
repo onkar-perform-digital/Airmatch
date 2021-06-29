@@ -243,7 +243,7 @@ class _UserInformationState extends State<UserInformation> {
                                                       uid: Constants.uid,
                                                       phone: widget.phone
                                                           .toString(),
-                                                    )));
+                                                    ), settings: RouteSettings(name: 'Upload Pic Screen')));
                                       }
                                     },
                                     child: const Text(

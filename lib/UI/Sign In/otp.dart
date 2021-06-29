@@ -1,3 +1,4 @@
+import 'package:am_debug/Services/analytics_service.dart';
 import 'package:am_debug/UI/Dashboard/DashboardScreen.dart';
 import 'package:am_debug/UI/Registration/UserInformation.dart';
 import 'package:am_debug/helpers/constants.dart';
@@ -143,8 +144,14 @@ class _OTPScreenState extends State<OTPScreen> {
                                                   context,
                                                   MaterialPageRoute(
                                                       builder: (context) =>
-                                                          DashboardScreen(1)),
+                                                          DashboardScreen(1),
+                                                      settings: RouteSettings(
+                                                          name:
+                                                              'Dashboard Screen')),
                                                   (route) => false);
+                                              AnalyticsService().userSignedIn(
+                                                  FirebaseAuth.instance
+                                                      .currentUser.uid);
                                               Constants.phoneno =
                                                   widget.phone.toString();
                                             } else {
@@ -158,7 +165,10 @@ class _OTPScreenState extends State<OTPScreen> {
                                                       builder: (context) =>
                                                           UserInformation(
                                                             phone: widget.phone,
-                                                          )),
+                                                          ),
+                                                      settings: RouteSettings(
+                                                          name:
+                                                              'User Information Screen')),
                                                   (route) => false);
                                               Constants.phoneno =
                                                   widget.phone.toString();
@@ -170,9 +180,10 @@ class _OTPScreenState extends State<OTPScreen> {
                                         HelperFunctions.saveUidPreferenceKey(
                                             Constants.uid);
                                         Constants.phoneno =
-                                                  widget.phone.toString();
-                                            HelperFunctions.savePhonenoPreferenceKey(
-                                            Constants.phoneno);
+                                            widget.phone.toString();
+                                        HelperFunctions
+                                            .savePhonenoPreferenceKey(
+                                                Constants.phoneno);
                                       });
                                     } catch (e) {
                                       _loading = false;
@@ -304,20 +315,29 @@ class _OTPScreenState extends State<OTPScreen> {
                   Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => DashboardScreen(1)),
+                          builder: (context) => DashboardScreen(1),
+                          settings: RouteSettings(name: 'Dashboard Screen')),
                       (route) => false);
-                  HelperFunctions.savePhonenoPreferenceKey(widget.phone.toString());
-                  print("Shared Pref: ${HelperFunctions.getPhonenoPreferenceKey()}");
+                  AnalyticsService()
+                      .userSignedIn(FirebaseAuth.instance.currentUser.uid);
+                  HelperFunctions.savePhonenoPreferenceKey(
+                      widget.phone.toString());
+                  print(
+                      "Shared Pref: ${HelperFunctions.getPhonenoPreferenceKey()}");
                 } else {
                   Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(
                           builder: (context) => UserInformation(
                                 phone: widget.phone,
-                              )),
+                              ),
+                          settings:
+                              RouteSettings(name: 'User Information Screen')),
                       (route) => false);
-                  HelperFunctions.savePhonenoPreferenceKey(widget.phone.toString());
-                  print("Shared Pref: ${HelperFunctions.getPhonenoPreferenceKey()}");
+                  HelperFunctions.savePhonenoPreferenceKey(
+                      widget.phone.toString());
+                  print(
+                      "Shared Pref: ${HelperFunctions.getPhonenoPreferenceKey()}");
                 }
               });
             }

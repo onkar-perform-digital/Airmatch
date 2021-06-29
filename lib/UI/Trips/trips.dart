@@ -1,12 +1,15 @@
 import 'dart:ui';
 
 import 'package:am_debug/Services/Database.dart';
+import 'package:am_debug/Services/analytics_service.dart';
+import 'package:am_debug/Services/getstream.dart';
 import 'package:am_debug/Services/photos_api.dart';
 import 'package:am_debug/UI/Flight%20GroupChat/chat_page.dart';
 import 'package:am_debug/helpers/constants.dart';
 import 'package:am_debug/helpers/loading.dart';
 import 'package:am_debug/helpers/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:am_debug/UI/Trips/tripBottomSheet.dart';
 import 'package:flutter_image/flutter_image.dart';
@@ -45,12 +48,22 @@ class _TripState extends State<Trip> {
 
   getMembersCount(String grpName) {
     return StreamBuilder(
-      stream: FirebaseFirestore.instance.collection("groups").doc(grpName).snapshots(),
-      builder: (context, snapshot) {
-        List<dynamic> array = snapshot.data["members"];
-        return snapshot.hasData ? mediumText("${array.length} members", Constants.blackClr) : Text("loading");
-      }
-    );
+        stream: FirebaseFirestore.instance
+            .collection("groups")
+            .doc(grpName)
+            .snapshots(),
+        builder: (context, snapshot) {
+          List<dynamic> array = snapshot.data["members"];
+          return snapshot.hasData
+              ? mediumText("${array.length} members", Constants.blackClr)
+              : Text("loading");
+        });
+  }
+
+  @override
+  void initState() {
+    FirebaseAnalytics().setCurrentScreen(screenName: 'Trips screen');
+    super.initState();
   }
 
   @override
@@ -97,6 +110,7 @@ class _TripState extends State<Trip> {
               onTap: () {
                 scaffoldKey.currentState
                     .showBottomSheet<void>((BuildContext context) {
+                  AnalyticsService().currentScreen("Trip-Bottom sheet");
                   return TripBottomSheet();
                 });
               },
@@ -169,6 +183,9 @@ class _TripState extends State<Trip> {
               GestureDetector(
                 onTap: () async {
                   var grpname = "$date : $airlineNo";
+                  await AnalyticsService().grpViews(grpname.toString(), Constants.uid);
+                  //await GetStream().creatingWatchingChannel(Constants.myname, grpname.toString());
+
                   if (await doesGroupAlreadyExist(grpname) == true) {
                     await DatabaseMethods()
                         .joinGrp(Constants.myname, grpname)
@@ -293,7 +310,6 @@ class _TripState extends State<Trip> {
                                                 ],
                                               )),
                                             ),
-                                            
                                           ],
                                         ),
                                       ),

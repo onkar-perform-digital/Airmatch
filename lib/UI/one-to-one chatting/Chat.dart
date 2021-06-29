@@ -2,6 +2,7 @@ import 'package:am_debug/Services/Database.dart';
 import 'package:am_debug/helpers/constants.dart';
 import 'package:am_debug/helpers/helperfunctions.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:strings/strings.dart';
 import 'ConversationScreen.dart';
@@ -50,6 +51,7 @@ class _ChatState extends State<Chat> {
 
   @override
   void initState() {
+    FirebaseAnalytics().setCurrentScreen(screenName: 'Personal Chat');
     getUserInfo();
     super.initState();
   }

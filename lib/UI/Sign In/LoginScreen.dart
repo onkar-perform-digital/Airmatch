@@ -100,7 +100,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     countryCode + _controller.text.toString();
                                 print(phno);
                                 Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => OTPScreen(phno)));
+                                    builder: (context) => OTPScreen(phno), settings: RouteSettings(name: 'OTP Screen')));
                               }
                             },
                             decoration: InputDecoration(

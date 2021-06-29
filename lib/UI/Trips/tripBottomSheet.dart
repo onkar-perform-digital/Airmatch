@@ -1,6 +1,8 @@
 import 'package:am_debug/Services/Database.dart';
+import 'package:am_debug/Services/analytics_service.dart';
 import 'package:am_debug/UI/Flights/FlightsList.dart';
 import 'package:am_debug/UI/Trips/AirportSearch.dart';
+import 'package:am_debug/helpers/constants.dart';
 import 'package:flutter/material.dart';
 
 class TripBottomSheet extends StatefulWidget {
@@ -185,6 +187,7 @@ class _TripBottomSheetState extends State<TripBottomSheet> {
                       color: Colors.blue,
                       textColor: Colors.white,
                       onPressed: () async {
+                        await AnalyticsService().buttonClicked("New flight Form btn", Constants.uid);
                         await Navigator.push(
                             context,
                             MaterialPageRoute(
