@@ -14,8 +14,6 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  //var uid = "";
-
   TextEditingController statusCtlr = TextEditingController();
   int totalFlights;
 
@@ -28,7 +26,12 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   totalFlightsTaken() async {
-    totalFlights = await FirebaseFirestore.instance.collection("users").doc(Constants.uid).collection("User Travel Info").snapshots().length;
+    totalFlights = await FirebaseFirestore.instance
+        .collection("users")
+        .doc(Constants.uid)
+        .collection("User Travel Info")
+        .snapshots()
+        .length;
     print(totalFlights.toString());
   }
 
@@ -40,6 +43,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    // Update User Status. Adopted the change status functionality similar to how clubhouse app handles it!
     updateStatus(String status) async {
       await FirebaseFirestore.instance
           .collection('users')
@@ -120,7 +124,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                               enabled: true,
                                               filled: true,
                                               border: InputBorder.none,
-                                              hintText: doc["status"] != "" ? doc["status"] : "Enter your status here",
+                                              hintText: doc["status"] != ""
+                                                  ? doc["status"]
+                                                  : "Enter your status here",
                                               hintStyle: TextStyle(
                                                 fontStyle: FontStyle.italic,
                                               )),
@@ -138,7 +144,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                           child: Column(
                                             children: [
                                               Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
                                                 children: [
                                                   Text("Total flights taken"),
                                                   Text(totalFlights.toString()),

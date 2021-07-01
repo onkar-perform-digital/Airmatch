@@ -6,32 +6,24 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 class GroupChat extends StatefulWidget {
-  const GroupChat({ Key key }) : super(key: key);
+  const GroupChat({Key key}) : super(key: key);
 
   @override
   _GroupChatState createState() => _GroupChatState();
 }
 
 class _GroupChatState extends State<GroupChat> {
-
-  // data
-  //final AuthService _auth = AuthService();
-  // User _user;
   String _groupName;
-  // String _userName = '';
-  // String _email = '';
   Stream _groups;
 
-
-  // initState
   @override
   void initState() {
     super.initState();
     _getUserAuthAndJoinedGroups();
   }
 
-
-  // widgets
+  // Widget gets displayed when no Grp is present: Not added
+  /*
   Widget noGroupWidget() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 25.0),
@@ -50,47 +42,40 @@ class _GroupChatState extends State<GroupChat> {
       )
     );
   }
-
-
+  */
 
   Widget groupsList() {
     return StreamBuilder(
       stream: _groups,
       builder: (context, snapshot) {
-        if(snapshot.hasData) {
-          if(snapshot.data['groups'] != null) {
+        if (snapshot.hasData) {
+          if (snapshot.data['groups'] != null) {
             print(snapshot.data['groups'].length);
-            if(snapshot.data['groups'].length != 0) {
+            if (snapshot.data['groups'].length != 0) {
               return ListView.builder(
-                itemCount: snapshot.data['groups'].length,
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  int reqIndex = snapshot.data['groups'].length - index - 1;
-                  return GroupTile(userName: snapshot.data['First name'], groupId: snapshot.data['groups'][reqIndex], groupName: snapshot.data['groups'][reqIndex]);
-                }
-              );
+                  itemCount: snapshot.data['groups'].length,
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    int reqIndex = snapshot.data['groups'].length - index - 1;
+                    return GroupTile(
+                        userName: snapshot.data['First name'],
+                        groupId: snapshot.data['groups'][reqIndex],
+                        groupName: snapshot.data['groups'][reqIndex]);
+                  });
+            } else {
+              return Container();
             }
-            else {
-              return noGroupWidget();
-            }
+          } else {
+            return Container();
           }
-          else {
-            return noGroupWidget();
-          }
-        }
-        else {
-          return Center(
-            child: CircularProgressIndicator()
-          );
+        } else {
+          return Center(child: CircularProgressIndicator());
         }
       },
     );
   }
 
-
-  // functions
   _getUserAuthAndJoinedGroups() async {
-    //_user = await FirebaseAuth.instance.currentUser;
     await Firebase.initializeApp();
     await DatabaseMethods().getUserGroups().then((snapshots) {
       print(snapshots);
@@ -101,31 +86,18 @@ class _GroupChatState extends State<GroupChat> {
     });
   }
 
-
-  // String _destructureId(String res) {
-  //   // print(res.substring(0, res.indexOf('_')));
-  //   return res.substring(0, res.indexOf('_'));
-  // }
-
-
-  // String _destructureName(String res) {
-  //   // print(res.substring(res.indexOf('_') + 1));
-  //   return res.substring(res.indexOf('_') + 1);
-  // }
-
-
   void _popupDialog(BuildContext context) {
     Widget cancelButton = FlatButton(
       child: Text("Cancel"),
-      onPressed:  () {
+      onPressed: () {
         Navigator.of(context).pop();
       },
     );
     Widget createButton = FlatButton(
       child: Text("Create"),
-      onPressed:  () async {
-        if(_groupName != null) {
-            DatabaseMethods().createGroup(Constants.uid, _groupName);
+      onPressed: () async {
+        if (_groupName != null) {
+          DatabaseMethods().createGroup(Constants.uid, _groupName);
           Navigator.of(context).pop();
         }
       },
@@ -134,15 +106,10 @@ class _GroupChatState extends State<GroupChat> {
     AlertDialog alert = AlertDialog(
       title: Text("Create a group"),
       content: TextField(
-        onChanged: (val) {
-          _groupName = val;
-        },
-        style: TextStyle(
-          fontSize: 15.0,
-          height: 2.0,
-          color: Colors.black             
-        )
-      ),
+          onChanged: (val) {
+            _groupName = val;
+          },
+          style: TextStyle(fontSize: 15.0, height: 2.0, color: Colors.black)),
       actions: [
         cancelButton,
         createButton,
@@ -156,7 +123,6 @@ class _GroupChatState extends State<GroupChat> {
       },
     );
   }
-
 
   // Building the HomePage widget
   @override
@@ -175,7 +141,6 @@ class _GroupChatState extends State<GroupChat> {
   }
 }
 
-
 class GroupTile extends StatelessWidget {
   final String userName;
   final String groupId;
@@ -186,8 +151,15 @@ class GroupTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context) => ChatPage(groupId: groupName, userName: userName, groupName: groupName,)));
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ChatPage(
+                      groupId: groupName,
+                      userName: userName,
+                      groupName: groupName,
+                    )));
       },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
@@ -195,10 +167,13 @@ class GroupTile extends StatelessWidget {
           leading: CircleAvatar(
             radius: 30.0,
             backgroundColor: Colors.blueAccent,
-            child: Text(groupName.substring(0, 1).toUpperCase(), textAlign: TextAlign.center, style: TextStyle(color: Colors.white)),
+            child: Text(groupName.substring(0, 1).toUpperCase(),
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white)),
           ),
           title: Text(groupName, style: TextStyle(fontWeight: FontWeight.bold)),
-          subtitle: Text("Join the conversation as $userName", style: TextStyle(fontSize: 13.0)),
+          subtitle: Text("Joined the conversation as $userName",
+              style: TextStyle(fontSize: 13.0)),
         ),
       ),
     );

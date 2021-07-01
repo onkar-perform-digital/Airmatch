@@ -100,7 +100,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                     countryCode + _controller.text.toString();
                                 print(phno);
                                 Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => OTPScreen(phno), settings: RouteSettings(name: 'OTP Screen')));
+                                    builder: (context) => OTPScreen(phno),
+                                    settings:
+                                        RouteSettings(name: 'OTP Screen')));
                               }
                             },
                             decoration: InputDecoration(
@@ -156,34 +158,3 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
-
-// SizedBox(height: 50,),
-// Container(
-//   margin: EdgeInsets.all(10),
-//   width: 300,
-//   child: FlatButton(
-//     color: Colors.blue,
-//     onPressed: () {
-//       Navigator.of(context).push(MaterialPageRoute(
-//           builder: (context) => OTPScreen(_controller.text)));
-//     },
-//     child: Text(
-//       'Next',
-//       style: TextStyle(color: Colors.white),
-//     ),
-//   ),
-// ),
-//           SizedBox(height: 50,),
-// Container(
-//   margin: EdgeInsets.all(10),
-//   width: 300,
-//   child: FlatButton(
-//     color: Colors.blue,
-//     onPressed: () {
-//     },
-//     child: Text(
-//       'Select country',
-//       style: TextStyle(color: Colors.white),
-//     ),
-//   ),
-// )

@@ -24,6 +24,7 @@ class _FlightsListState extends State<FlightsList> {
   String url =
       "http://api.aviationstack.com/v1/flights?access_key=72c69476757a9d606ccfcb4bee84ce62";
 
+  // Get current flights with their Airline names
   Future<void> getAirlines() async {
     flights = [];
     var response = await http.get(Uri.parse(url));
@@ -97,25 +98,27 @@ class _FlightsListState extends State<FlightsList> {
       String departureTime}) {
     return GestureDetector(
       onTap: () async {
-        await DatabaseMethods().createCityGroup(Constants.uid, widget.arrivalAirport);
-        await DatabaseMethods().createCityGroup(Constants.uid, widget.departureAirport);
+        await DatabaseMethods()
+            .createCityGroup(Constants.uid, widget.arrivalAirport);
+        await DatabaseMethods()
+            .createCityGroup(Constants.uid, widget.departureAirport);
         await DatabaseMethods()
             .uploadTriptoDB(
-              widget.date.toString(),
-              widget.departureAirport.toString(),
-              widget.arrivalAirport.toString(),
-              widget.bookingNo.toString(),
-              airlineName.toString(),
-              airlineNo.toString(),
-              arrivalTime.toString(),
-              departureTime.toString(),
-            )
+          widget.date.toString(),
+          widget.departureAirport.toString(),
+          widget.arrivalAirport.toString(),
+          widget.bookingNo.toString(),
+          airlineName.toString(),
+          airlineNo.toString(),
+          arrivalTime.toString(),
+          departureTime.toString(),
+        )
             .then((value) {
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => DashboardScreen(1)),
-                (route) => false);
-            } );
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => DashboardScreen(1)),
+              (route) => false);
+        });
       },
       child: Container(
         padding: EdgeInsets.all(20.0),

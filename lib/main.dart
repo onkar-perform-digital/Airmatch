@@ -19,31 +19,35 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stream_chat_flutter/stream_chat_flutter.dart';
 
 void main() async {
+  // Firebase Initialize
   WidgetsFlutterBinding.ensureInitialized();
   Firebase.initializeApp();
   //SharedPreferences.setMockInitialValues({});
-    Constants.client = new StreamChatClient(
-    '7qhs6z8qkbvs',
+
+  // Stream Initialize
+  Constants.client = new StreamChatClient(
+    'zaqch24sqnwh',
     logLevel: Level.INFO,
   );
   runApp(MyApp());
 }
 
+// Google Analytics Initialize
 FirebaseAnalytics analytics = FirebaseAnalytics();
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-  navigatorObservers: [
-    FirebaseAnalyticsObserver(analytics: analytics),
-  ],
-      
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        fontFamily: 'Baloo Tamma 2'
+      navigatorObservers: [
+        FirebaseAnalyticsObserver(analytics: analytics),
+      ],
+      builder: (context, child) => StreamChat(
+        client: Constants.client,
+        child: child,
       ),
+      title: 'Flutter Demo',
+      theme: ThemeData(primarySwatch: Colors.blue, fontFamily: 'Baloo Tamma 2'),
       home: AppStartAnimation(),
     );
   }

@@ -8,24 +8,18 @@ import 'package:flutter/material.dart';
 import './citychat_page.dart';
 
 class CityGroupChat extends StatefulWidget {
-  const CityGroupChat({ Key key }) : super(key: key);
+  const CityGroupChat({Key key}) : super(key: key);
 
   @override
   _CityGroupChatState createState() => _CityGroupChatState();
 }
 
 class _CityGroupChatState extends State<CityGroupChat> {
-
-  // data
   //final AuthService _auth = AuthService();
   // User _user;
   String _groupName;
-  // String _userName = '';
-  // String _email = '';
   Stream _groups;
 
-
-  // initState
   @override
   void initState() {
     FirebaseAnalytics().setCurrentScreen(screenName: 'City Grp Chat');
@@ -34,32 +28,31 @@ class _CityGroupChatState extends State<CityGroupChat> {
     _getUserAuthAndJoinedGroups();
   }
 
-
-  // widgets
+  // Used to indicate where there are no groups formed
   Widget noGroupWidget() {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 25.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          GestureDetector(
-            onTap: () {
-              _popupDialog(context);
-            },
-            child: Icon(Icons.add_circle, color: Colors.grey[700], size: 75.0)
-          ),
-          SizedBox(height: 20.0),
-        ],
-      )
-    );
+        padding: EdgeInsets.symmetric(horizontal: 25.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            GestureDetector(
+                onTap: () {
+                  _popupDialog(context);
+                },
+                child: Icon(Icons.add_circle,
+                    color: Colors.grey[700], size: 75.0)),
+            SizedBox(height: 20.0),
+          ],
+        ));
   }
 
-
-
-  // functions
+  // Get User joined groups
   _getUserAuthAndJoinedGroups() async {
     //_user = await FirebaseAuth.instance.currentUser;
+
+    // After arriving on Dashboard Screen made all previous routes false.
+    // Hence need to Initialize firebase again
     await Firebase.initializeApp();
     await DatabaseMethods().getUserCityGroups().then((snapshots) {
       print(snapshots);
@@ -70,31 +63,19 @@ class _CityGroupChatState extends State<CityGroupChat> {
     });
   }
 
-
-  // String _destructureId(String res) {
-  //   // print(res.substring(0, res.indexOf('_')));
-  //   return res.substring(0, res.indexOf('_'));
-  // }
-
-
-  // String _destructureName(String res) {
-  //   // print(res.substring(res.indexOf('_') + 1));
-  //   return res.substring(res.indexOf('_') + 1);
-  // }
-
-
+  // Only for testing group creation
   void _popupDialog(BuildContext context) {
     Widget cancelButton = FlatButton(
       child: Text("Cancel"),
-      onPressed:  () {
+      onPressed: () {
         Navigator.of(context).pop();
       },
     );
     Widget createButton = FlatButton(
       child: Text("Create"),
-      onPressed:  () async {
-        if(_groupName != null) {
-            DatabaseMethods().createCityGroup(Constants.uid, _groupName);
+      onPressed: () async {
+        if (_groupName != null) {
+          DatabaseMethods().createCityGroup(Constants.uid, _groupName);
           Navigator.of(context).pop();
         }
       },
@@ -103,15 +84,10 @@ class _CityGroupChatState extends State<CityGroupChat> {
     AlertDialog alert = AlertDialog(
       title: Text("Create a group"),
       content: TextField(
-        onChanged: (val) {
-          _groupName = val;
-        },
-        style: TextStyle(
-          fontSize: 15.0,
-          height: 2.0,
-          color: Colors.black             
-        )
-      ),
+          onChanged: (val) {
+            _groupName = val;
+          },
+          style: TextStyle(fontSize: 15.0, height: 2.0, color: Colors.black)),
       actions: [
         cancelButton,
         createButton,
@@ -126,24 +102,27 @@ class _CityGroupChatState extends State<CityGroupChat> {
     );
   }
 
-
-  // Building the HomePage widget
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: StreamBuilder(
-      stream: _groups,
-      builder: (context, snapshot) {
-          return snapshot.data['City groups'] != null ? ListView.builder(
-                itemCount: snapshot.data['City groups'].length,
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  int reqIndex = snapshot.data['City groups'].length - index - 1;
-                  return GroupTile(userName: snapshot.data['First name'], groupId: snapshot.data['City groups'][reqIndex], groupName: snapshot.data['City groups'][reqIndex]);
-                }
-              ) : noGroupWidget();
-      },
-    ),
+        stream: _groups,
+        builder: (context, snapshot) {
+          return snapshot.data['City groups'] != null
+              ? ListView.builder(
+                  itemCount: snapshot.data['City groups'].length,
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    int reqIndex =
+                        snapshot.data['City groups'].length - index - 1;
+                    return GroupTile(
+                        userName: snapshot.data['First name'],
+                        groupId: snapshot.data['City groups'][reqIndex],
+                        groupName: snapshot.data['City groups'][reqIndex]);
+                  })
+              : noGroupWidget();
+        },
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           _popupDialog(context);
@@ -156,7 +135,6 @@ class _CityGroupChatState extends State<CityGroupChat> {
   }
 }
 
-
 class GroupTile extends StatelessWidget {
   final String userName;
   final String groupId;
@@ -167,9 +145,16 @@ class GroupTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: ()async {
+      onTap: () async {
         await AnalyticsService().grpViews(groupName, Constants.uid);
-        Navigator.push(context, MaterialPageRoute(builder: (context) => CityChatPage(groupId: groupName, userName: userName, groupName: groupName,)));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => CityChatPage(
+                      groupId: groupName,
+                      userName: userName,
+                      groupName: groupName,
+                    )));
       },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
@@ -177,7 +162,9 @@ class GroupTile extends StatelessWidget {
           leading: CircleAvatar(
             radius: 30.0,
             backgroundColor: Colors.blueAccent,
-            child: Text(groupName.substring(0, 1).toUpperCase(), textAlign: TextAlign.center, style: TextStyle(color: Colors.white)),
+            child: Text(groupName.substring(0, 1).toUpperCase(),
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white)),
           ),
           title: Text(groupName, style: TextStyle(fontWeight: FontWeight.bold)),
         ),

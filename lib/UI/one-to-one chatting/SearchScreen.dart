@@ -17,6 +17,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   QuerySnapshot searchSnapshot;
 
+  // Create chatroom with the searchList user
   createChatroom({String userPhoneNo}) {
     if (userPhoneNo != Constants.phoneno) {
       String chatRoomId = getChatRoomId(userPhoneNo, Constants.phoneno);
@@ -48,6 +49,8 @@ class _SearchScreenState extends State<SearchScreen> {
     }
   }
 
+
+  // Search results list
   Widget searchList() {
     return searchSnapshot != null
         ? ListView.builder(
@@ -55,13 +58,16 @@ class _SearchScreenState extends State<SearchScreen> {
             itemCount: searchSnapshot.docs.length,
             itemBuilder: (context, index) {
               return searchTile(
-                userPhoneNo: (searchSnapshot.docs[index].data()as  Map)['Phone Number'],
+                userPhoneNo:
+                    (searchSnapshot.docs[index].data() as Map)['Phone Number'],
                 userEmail: (searchSnapshot.docs[index].data() as Map)['uid'],
               );
             })
         : Container();
   }
+  
 
+  // Initialize the search
   initiateSearch() {
     databaseMethods.getUser(searchController.text.toString()).then((value) {
       setState(() {

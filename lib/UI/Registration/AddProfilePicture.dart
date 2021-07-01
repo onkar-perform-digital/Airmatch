@@ -25,6 +25,8 @@ class _AddProfilePictureState extends State<AddProfilePicture> {
   final picker = ImagePicker();
   bool _loading = false;
 
+
+  // Get image from device
   Future getImage() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
 
@@ -67,7 +69,9 @@ class _AddProfilePictureState extends State<AddProfilePicture> {
               imageUrl.toString(), widget.uid, widget.phone)
           .then((value) => Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(builder: (context) => DashboardScreen(1), settings: RouteSettings(name: 'Dashboard Screen')),
+              MaterialPageRoute(
+                  builder: (context) => DashboardScreen(1),
+                  settings: RouteSettings(name: 'Dashboard Screen')),
               (route) => false));
     }
   }
@@ -90,19 +94,22 @@ class _AddProfilePictureState extends State<AddProfilePicture> {
                         GestureDetector(
                             onTap: () {
                               DatabaseMethods()
-                              .uploadtoDB(
-                                  widget.fname,
-                                  widget.lname,
-                                  widget.gender,
-                                  widget.dob,
-                                  "",
-                                  widget.uid,
-                                  widget.phone)
-                              .then((value) => Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => DashboardScreen(1), settings: RouteSettings(name: 'Dashboard Screen')),
-                                  (route) => false));
+                                  .uploadtoDB(
+                                      widget.fname,
+                                      widget.lname,
+                                      widget.gender,
+                                      widget.dob,
+                                      "",
+                                      widget.uid,
+                                      widget.phone)
+                                  .then((value) => Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              DashboardScreen(1),
+                                          settings: RouteSettings(
+                                              name: 'Dashboard Screen')),
+                                      (route) => false));
                             },
                             child: Text(
                               "Skip",

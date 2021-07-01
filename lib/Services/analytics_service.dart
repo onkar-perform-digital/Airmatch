@@ -8,7 +8,7 @@ class AnalyticsService {
   FirebaseAnalyticsObserver getAnalyticsObserver() =>
       FirebaseAnalyticsObserver(analytics: _analytics);
 
-  // User properties tells us what the user is
+
   Future setUserProperties({@required String userId, String userRole}) async {
     await _analytics.setUserId(userId);
     await _analytics.setUserProperty(name: 'user_role', value: userRole);

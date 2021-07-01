@@ -23,19 +23,21 @@ class _ChatState extends State<Chat> {
     return StreamBuilder(
       stream: chatRooms,
       builder: (context, snapshot) {
-        return snapshot.hasData ? ListView.builder(
+        return snapshot.hasData
+            ? ListView.builder(
                 itemCount: snapshot.data.docs.length,
                 itemBuilder: (context, index) {
                   return ChatTile(
-                    snapshot.data.docs[index].data()["chatroomId"]
+                    snapshot.data.docs[index]
+                        .data()["chatroomId"]
                         .toString()
                         .replaceAll("_", "")
                         .replaceAll(Constants.phoneno, ""),
                     snapshot.data.docs[index].data()["chatroomId"],
                   );
                 },
-              ): Container();
-            
+              )
+            : Container();
       },
     );
   }

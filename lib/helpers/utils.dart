@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
+// Text Constant function
 
 AutoSizeText smallText(String text, var color) {
   return AutoSizeText(text,

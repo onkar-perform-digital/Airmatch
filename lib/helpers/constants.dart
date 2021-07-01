@@ -12,4 +12,6 @@ class Constants {
   static var blackClr = 0xFF000000;
   static StreamChatClient client;
   static TabController tabController;
+  static Channel channel;
+  // static var streamId;
 }

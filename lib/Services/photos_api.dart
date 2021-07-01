@@ -10,7 +10,10 @@ class PhotosApi {
 
   String apikey = "AIzaSyAWpD13FVr-fXe27uje9p2V-fpbea7r_G0";
 
+
   Future<String> getImgUrl(String cityName) async {
+
+    // This request gives us the PhotoKey
     String apiurl = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=$cityName&key=$apikey&inputtype=textquery&fields=name,photos";
 
     
@@ -21,7 +24,7 @@ class PhotosApi {
     print(jsonData);
 
     if(jsonData["status"]=="OK") {
-
+          // child API was there inside Parent API. Hence wrote the function to get result in this way
           jsonData['candidates'].forEach((element1) {
             element1["photos"].forEach((element2) {
               refkey = element2["photo_reference"];
@@ -31,6 +34,7 @@ class PhotosApi {
       //print(refkey);
     }
 
+    // ImageUrl is Obtained from this request
     imageUrl = "https://maps.googleapis.com/maps/api/place/photo?photoreference=$refkey&key=$apikey&maxwidth=800&maxheight=800";
 
     img = NetworkImage("$imageUrl");

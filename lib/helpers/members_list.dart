@@ -14,6 +14,8 @@ class MembersList extends StatefulWidget {
   _MembersListState createState() => _MembersListState();
 }
 
+// For showing members in a Chat grp from firestore. 
+// Currently not using since the chatting service has been changed to StreamChat
 class _MembersListState extends State<MembersList> {
   @override
   void initState() {

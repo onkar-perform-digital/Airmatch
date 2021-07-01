@@ -15,12 +15,12 @@ class AppStartAnimation extends StatefulWidget {
 class _AppStartAnimationState extends State<AppStartAnimation> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     startTime();
   }
 
   startTime() async {
+    // For showing this Animation page for this much duration only
     var duration = new Duration(seconds: 2, milliseconds: 300);
     return new Timer(duration, route);
   }
@@ -28,11 +28,10 @@ class _AppStartAnimationState extends State<AppStartAnimation> {
   bool _isLoggedIn = false;
 
   route() async {
-
-            // Navigator.pushAndRemoveUntil(
-            // context,
-            // MaterialPageRoute(builder: (context) => LoginScreen()),
-            // (route) => false);
+    // Navigator.pushAndRemoveUntil(
+    // context,
+    // MaterialPageRoute(builder: (context) => LoginScreen()),
+    // (route) => false);
 
     await HelperFunctions.getUserLoggedInPreferenceKey().then((value) {
       if (value != null) {
@@ -44,12 +43,16 @@ class _AppStartAnimationState extends State<AppStartAnimation> {
       if (_isLoggedIn == true) {
         Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => DashboardScreen(1), settings: RouteSettings(name: 'Dashboard Screen')),
+            MaterialPageRoute(
+                builder: (context) => DashboardScreen(1),
+                settings: RouteSettings(name: 'Dashboard Screen')),
             (route) => false);
       } else {
         Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => LoginScreen(), settings: RouteSettings(name: 'Login Screen')),
+            MaterialPageRoute(
+                builder: (context) => LoginScreen(),
+                settings: RouteSettings(name: 'Login Screen')),
             (route) => false);
       }
     });

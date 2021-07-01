@@ -143,7 +143,6 @@ class _UserInformationState extends State<UserInformation> {
                                       dateController.text = date
                                           .toIso8601String()
                                           .substring(0, 10);
-                                      
                                     },
                                     child: mediumText(
                                         'Calender', Constants.blueClr),
@@ -157,9 +156,10 @@ class _UserInformationState extends State<UserInformation> {
                             TextFormField(
                               controller: dateController,
                               validator: (String value) {
-                                if(value==null || value=="") {
+                                if (value == null || value == "") {
                                   return "Select yourn birth Date";
-                                } else return null;
+                                } else
+                                  return null;
                               },
                               decoration: InputDecoration(
                                 enabled: false,
@@ -243,7 +243,10 @@ class _UserInformationState extends State<UserInformation> {
                                                       uid: Constants.uid,
                                                       phone: widget.phone
                                                           .toString(),
-                                                    ), settings: RouteSettings(name: 'Upload Pic Screen')));
+                                                    ),
+                                                settings: RouteSettings(
+                                                    name:
+                                                        'Upload Pic Screen')));
                                       }
                                     },
                                     child: const Text(
@@ -268,52 +271,3 @@ class _UserInformationState extends State<UserInformation> {
     ));
   }
 }
-
-// Container(
-//         height: MediaQuery.of(context).size.height,
-//         width: MediaQuery.of(context).size.width - 10,
-//         child: Column(
-//           children: [
-//             Padding(
-//               padding: const EdgeInsets.all(15.0),
-//               child: TextField(
-//                 controller: nameController,
-//                 decoration:
-//                     InputDecoration(hintText: "Enter Name", filled: true),
-//               ),
-//             ),
-//             Padding(
-//               padding: const EdgeInsets.all(15.0),
-//               child: TextField(
-//                 controller: citynameController,
-//                 decoration:
-//                     InputDecoration(hintText: "Enter your City", filled: true),
-//               ),
-//             ),
-//             SizedBox(
-//               height: 50,
-//             ),
-//             Container(
-//               margin: EdgeInsets.all(10),
-//               width: 300,
-//               child: FlatButton(
-//                 color: Colors.blue,
-// onPressed: () {
-// DatabaseMethods()
-//     .uploadtoDB(nameController.text.toString(),
-//         citynameController.text.toString(), uid)
-//     .then((value) => Navigator.pushAndRemoveUntil(
-//         context,
-//         MaterialPageRoute(
-//             builder: (context) => DashboardScreen()),
-//         (route) => false));
-// },
-//                 child: Text(
-//                   'Next',
-//                   style: TextStyle(color: Colors.white),
-//                 ),
-//               ),
-//             )
-//           ],
-//         ),
-//       ),

@@ -4,6 +4,7 @@ import 'package:am_debug/Services/Database.dart';
 import 'package:am_debug/Services/analytics_service.dart';
 import 'package:am_debug/Services/getstream.dart';
 import 'package:am_debug/Services/photos_api.dart';
+import 'package:am_debug/StreamChat/channelPage.dart';
 import 'package:am_debug/UI/Flight%20GroupChat/chat_page.dart';
 import 'package:am_debug/helpers/constants.dart';
 import 'package:am_debug/helpers/loading.dart';
@@ -13,6 +14,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:am_debug/UI/Trips/tripBottomSheet.dart';
 import 'package:flutter_image/flutter_image.dart';
+import 'package:stream_chat_flutter/stream_chat_flutter.dart';
 
 class Trip extends StatefulWidget {
   const Trip({Key key}) : super(key: key);
@@ -23,6 +25,8 @@ class Trip extends StatefulWidget {
 
 class _TripState extends State<Trip> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
+  // No Image Url
   String url =
       "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/No_image_3x4.svg/1200px-No_image_3x4.svg.png";
 
@@ -63,6 +67,7 @@ class _TripState extends State<Trip> {
   @override
   void initState() {
     FirebaseAnalytics().setCurrentScreen(screenName: 'Trips screen');
+    // GetStream().connectUser(User(id: Constants.myname), Constants.streamId);
     super.initState();
   }
 
@@ -182,35 +187,40 @@ class _TripState extends State<Trip> {
               ),
               GestureDetector(
                 onTap: () async {
-                  var grpname = "$date : $airlineNo";
-                  await AnalyticsService().grpViews(grpname.toString(), Constants.uid);
-                  //await GetStream().creatingWatchingChannel(Constants.myname, grpname.toString());
+                  var grpname = "${date}_$airlineNo";
+                  await AnalyticsService().grpViews(grpname.toUpperCase().toString(), Constants.uid);
 
-                  if (await doesGroupAlreadyExist(grpname) == true) {
-                    await DatabaseMethods()
-                        .joinGrp(Constants.myname, grpname)
-                        .whenComplete(() {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ChatPage(
-                                  groupId: grpname,
-                                  groupName: grpname,
-                                  userName: Constants.myname)));
-                    });
-                  } else {
-                    await DatabaseMethods()
-                        .createGroup(Constants.myname, grpname)
-                        .whenComplete(() {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ChatPage(
-                                  groupId: grpname,
-                                  groupName: grpname,
-                                  userName: Constants.myname)));
-                    });
-                  }
+                  // StreamChat code
+                  Constants.channel = await GetStream().creatingWatchingChannel(Constants.phoneno, grpname.toString());
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => ChannelPage(), settings: RouteSettings(name: 'Channel Screen')));
+
+                  // If you want to test out chatting over firestore. Below commented is the code for it!
+
+                  // if (await doesGroupAlreadyExist(grpname) == true) {
+                  //   await DatabaseMethods()
+                  //       .joinGrp(Constants.myname, grpname)
+                  //       .whenComplete(() {
+                  //     Navigator.push(
+                  //         context,
+                  //         MaterialPageRoute(
+                  //             builder: (context) => ChatPage(
+                  //                 groupId: grpname,
+                  //                 groupName: grpname,
+                  //                 userName: Constants.myname)));
+                  //   });
+                  // } else {
+                  //   await DatabaseMethods()
+                  //       .createGroup(Constants.myname, grpname)
+                  //       .whenComplete(() {
+                  //     Navigator.push(
+                  //         context,
+                  //         MaterialPageRoute(
+                  //             builder: (context) => ChatPage(
+                  //                 groupId: grpname,
+                  //                 groupName: grpname,
+                  //                 userName: Constants.myname)));
+                  //   });
+                  // }
                 },
                 child: FutureBuilder<String>(
                     future: getImgUrl(arrivalAirport.toString()),

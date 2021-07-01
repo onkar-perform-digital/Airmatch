@@ -151,7 +151,7 @@ class _TripBottomSheetState extends State<TripBottomSheet> {
               ),
               TextField(
                 // controller: ,
-                //TODO
+                //TODO: Future: Add other travelling modes also like train, bus, etc
                 decoration: InputDecoration(
                   enabled: false,
                   filled: true,
@@ -187,7 +187,8 @@ class _TripBottomSheetState extends State<TripBottomSheet> {
                       color: Colors.blue,
                       textColor: Colors.white,
                       onPressed: () async {
-                        await AnalyticsService().buttonClicked("New flight Form btn", Constants.uid);
+                        await AnalyticsService().buttonClicked(
+                            "New flight Form btn", Constants.uid);
                         await Navigator.push(
                             context,
                             MaterialPageRoute(

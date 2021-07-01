@@ -1,4 +1,5 @@
 import 'package:am_debug/Services/analytics_service.dart';
+import 'package:am_debug/Services/getstream.dart';
 import 'package:am_debug/UI/Dashboard/DashboardScreen.dart';
 import 'package:am_debug/UI/Registration/UserInformation.dart';
 import 'package:am_debug/helpers/constants.dart';
@@ -10,6 +11,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:pinput/pin_put/pin_put.dart';
+import 'package:stream_chat_flutter/stream_chat_flutter.dart' as streamchat;
 
 class OTPScreen extends StatefulWidget {
   final String phone;
@@ -134,11 +136,19 @@ class _OTPScreenState extends State<OTPScreen> {
                                                   .instance.currentUser.uid)
                                               .get()
                                               .then((DocumentSnapshot
-                                                  documentSnapshot) {
+                                                  documentSnapshot) async {
                                             if (documentSnapshot.exists) {
                                               setState(() {
                                                 _loading = true;
                                               });
+
+                                              // Initializing User connection with StreamChat
+                                              await GetStream().connectUser(
+                                                  streamchat.User(
+                                                      id: widget.phone
+                                                          .toString()),
+                                                  Constants.client.devToken(
+                                                      widget.phone.toString()));
 
                                               Navigator.pushAndRemoveUntil(
                                                   context,
@@ -235,69 +245,6 @@ class _OTPScreenState extends State<OTPScreen> {
             ));
   }
 
-  // Column(
-  //       children: [
-  //         Container(
-  //           margin: EdgeInsets.only(top: 40),
-  //           child: Center(
-  //             child: Text(
-  //               'Verify +91-${widget.phone}',
-  //               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 26),
-  //             ),
-  //           ),
-  //         ),
-  //         Padding(
-  //           padding: const EdgeInsets.all(30.0),
-  //           child: PinPut(
-  //             fieldsCount: 6,
-  //             textStyle: const TextStyle(fontSize: 25.0, color: Colors.white),
-  //             eachFieldWidth: 40.0,
-  //             eachFieldHeight: 55.0,
-  //             focusNode: _pinPutFocusNode,
-  //             controller: _pinPutController,
-  //             submittedFieldDecoration: pinPutDecoration,
-  //             selectedFieldDecoration: pinPutDecoration,
-  //             followingFieldDecoration: pinPutDecoration,
-  //             pinAnimationType: PinAnimationType.fade,
-  //             onSubmit: (pin) async {
-  //               try {
-  //                 await FirebaseAuth.instance
-  //                     .signInWithCredential(PhoneAuthProvider.credential(
-  //                         verificationId: _verificationCode, smsCode: pin))
-  //                     .then((value) async {
-  //                   if (value.user != null) {
-  //                     FirebaseFirestore.instance
-  //                         .collection('users')
-  //                         .doc(FirebaseAuth.instance.currentUser.uid)
-  //                         .get()
-  //                         .then((DocumentSnapshot documentSnapshot) {
-  //                       if (documentSnapshot.exists) {
-  //                         Navigator.pushAndRemoveUntil(
-  //                             context,
-  //                             MaterialPageRoute(
-  //                                 builder: (context) => DashboardScreen()),
-  //                             (route) => false);
-  //                       } else {
-  //                         Navigator.pushAndRemoveUntil(
-  //                             context,
-  //                             MaterialPageRoute(
-  //                                 builder: (context) => UserInformation()),
-  //                             (route) => false);
-  //                       }
-  //                     });
-  //                   }
-  //                 });
-  //               } catch (e) {
-  //                 FocusScope.of(context).unfocus();
-  //                 _scaffoldkey.currentState
-  //                     .showSnackBar(SnackBar(content: Text('invalid OTP')));
-  //               }
-  //             },
-  //           ),
-  //         )
-  //       ],
-  //     ),
-
   _verifyPhone() async {
     await FirebaseAuth.instance.verifyPhoneNumber(
         phoneNumber: '${widget.phone}',
@@ -310,8 +257,14 @@ class _OTPScreenState extends State<OTPScreen> {
                   .collection('users')
                   .doc(FirebaseAuth.instance.currentUser.uid)
                   .get()
-                  .then((DocumentSnapshot documentSnapshot) {
+                  .then((DocumentSnapshot documentSnapshot) async {
                 if (documentSnapshot.exists) {
+
+                  // Initializing User connection with StreamChat
+                  await GetStream().connectUser(
+                      streamchat.User(id: widget.phone.toString()),
+                      Constants.client.devToken(widget.phone.toString()));
+
                   Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(

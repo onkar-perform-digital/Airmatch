@@ -4,10 +4,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:stream_chat_flutter/stream_chat_flutter.dart' as st;
 
 class DatabaseMethods {
+  // Get current signedIn user
   Future<User> getCurrentUser() async {
     return FirebaseAuth.instance.currentUser;
   }
 
+
+  // Search Result: get user from phone no cases
   getUser(String phone) async {
     return await FirebaseFirestore.instance
         .collection('users')
@@ -15,6 +18,8 @@ class DatabaseMethods {
         .get();
   }
 
+
+  // Upload new user data Function
   uploadUserInfo(String uid, Map userInfo) async {
     print('$uid');
     await FirebaseFirestore.instance
@@ -23,6 +28,8 @@ class DatabaseMethods {
         .set(userInfo);
   }
 
+
+  // Upload travel Info function
   uploadTravelInfo(String uid, Map userInfo, String from, String to,
       String airlineNo) async {
     print('$uid');
@@ -34,18 +41,24 @@ class DatabaseMethods {
         .set(userInfo);
   }
 
-  // Future updateInfo(String uid, String date, String city) async {
-  //   FirebaseFirestore.instance
-  //       .collection("users")
-  //       .doc(uid)
-  //       .update({
-  //     "DOB": date,
-  //     "city": city,
-  //   }).catchError((error) {
-  //     print(error);
-  //   });
-  // }
 
+  // To-be done for edit user profile
+  /*
+  Future updateInfo(String uid, String date, String city) async {
+    FirebaseFirestore.instance
+        .collection("users")
+        .doc(uid)
+        .update({
+      "DOB": date,
+      "city": city,
+    }).catchError((error) {
+      print(error);
+    });
+  }
+  */
+
+
+  // Upload new user Map generator function
   Future<void> uploadtoDB(String fname, String lname, String gender, String dob,
       String profileUrl, var uid, String phone) async {
     setSearchParam(String phoneno) {
@@ -65,14 +78,15 @@ class DatabaseMethods {
       print(output.toString());
       return output;
     }
+
     final user = st.User(id: fname.toString(), extraData: {
-      "name": "${fname.toString()}+${lname.toString()}", 
-      "image": profileUrl.toString(), 
-    }); 
+      "name": phone.toString(),
+      "image": profileUrl.toString(),
+    });
 
-    await Constants.client.connectUser(user, Constants.client.devToken(fname.toString())); 
+    await Constants.client
+        .connectUser(user, Constants.client.devToken(phone.toString()));
     print("ID: ${Constants.client.token}");
-
 
     if (uid != null) {
       Constants.uid = uid;
@@ -95,15 +109,9 @@ class DatabaseMethods {
     }
   }
 
-  Future<void> uploadTriptoDB(
-      String date,
-      String travellingFrom,
-      String travellingTo,
-      String bookingNo,
-      String airlineName,
-      String airlineNo,
-      String arrivalTime,
-      String departureTime) async {
+
+  // New trip Map
+  Future<void> uploadTriptoDB(String date, String travellingFrom, String travellingTo, String bookingNo, String airlineName, String airlineNo, String arrivalTime, String departureTime) async {
     if (Constants.uid != null) {
       Map<String, dynamic> tripInfoMap = {
         "Date": date,
@@ -121,6 +129,8 @@ class DatabaseMethods {
     }
   }
 
+
+  // Create one-to-one chat Room
   createChatroom(String chatRoomId, chatRoomMap) {
     FirebaseFirestore.instance
         .collection('ChatRoom')
@@ -131,6 +141,8 @@ class DatabaseMethods {
     });
   }
 
+
+  // One-to-one chat messages
   addConversationMessages(String chatRoomId, messageMap) {
     FirebaseFirestore.instance
         .collection('ChatRoom')
@@ -142,6 +154,8 @@ class DatabaseMethods {
     });
   }
 
+  
+  //One-to-one chat get messages
   getConversationMessages(String chatRoomId) async {
     return await FirebaseFirestore.instance
         .collection('ChatRoom')
@@ -151,6 +165,8 @@ class DatabaseMethods {
         .snapshots();
   }
 
+
+  // One-to-one chat get chats
   getChatRooms(String phone) async {
     return await FirebaseFirestore.instance
         .collection('ChatRoom')
@@ -158,7 +174,7 @@ class DatabaseMethods {
         .snapshots();
   }
 
-  // create group
+  // create flight group chat
   Future createGroup(String userName, String groupName) async {
     await FirebaseFirestore.instance.collection('groups').doc(groupName).set({
       'groupName': groupName,
@@ -251,7 +267,7 @@ class DatabaseMethods {
   //  }
   // }
 
-  // has user joined the group
+  // has user joined the flight group
   Future<bool> isUserJoined(
       String groupId, String groupName, String userName) async {
     DocumentReference userDocRef =
@@ -279,16 +295,15 @@ class DatabaseMethods {
     return snapshot;
   }
 
-  // get user groups
+  // get user flight groups
   getUserGroups() async {
-    // return await Firestore.instance.collection("users").where('email', isEqualTo: email).snapshots();
     return FirebaseFirestore.instance
         .collection("users")
         .doc("${Constants.uid}")
         .snapshots();
   }
 
-  // send message
+  // send Flight chat message
   sendMessage(String groupId, chatMessageData) {
     FirebaseFirestore.instance
         .collection('groups')
@@ -312,7 +327,7 @@ class DatabaseMethods {
         .snapshots();
   }
 
-  // search groups
+  // search groups: Future
   searchByName(String groupName) {
     return FirebaseFirestore.instance
         .collection("groups")
@@ -320,7 +335,7 @@ class DatabaseMethods {
         .get();
   }
 
-  // create group
+  // create City group
   Future createCityGroup(String userName, String groupName) async {
     await FirebaseFirestore.instance
         .collection('City groups')
@@ -351,6 +366,7 @@ class DatabaseMethods {
     });
   }
 
+  // Join City group
   Future joinCityGrp(String userName, String grpName) async {
     DocumentReference userDocRef =
         FirebaseFirestore.instance.collection('users').doc(Constants.uid);
@@ -382,6 +398,7 @@ class DatabaseMethods {
     }
   }
 
+  // Dont join user again in grp if he is already present
   Future<bool> isUserJoinedinCityGrp(
       String groupId, String groupName, String userName) async {
     DocumentReference userDocRef =
@@ -399,16 +416,15 @@ class DatabaseMethods {
     }
   }
 
-  // get user groups
+  // get user City groups
   getUserCityGroups() async {
-    // return await Firestore.instance.collection("users").where('email', isEqualTo: email).snapshots();
     return FirebaseFirestore.instance
         .collection("users")
         .doc("${Constants.uid}")
         .snapshots();
   }
 
-  // send message
+  // send City message
   sendMessageCity(String groupId, chatMessageData) {
     FirebaseFirestore.instance
         .collection('City groups')
@@ -422,7 +438,7 @@ class DatabaseMethods {
     });
   }
 
-  // get chats of a particular group
+  // get chats of a particular City group
   getCityChats(String groupId) async {
     return FirebaseFirestore.instance
         .collection('City groups')

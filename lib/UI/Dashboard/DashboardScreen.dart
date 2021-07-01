@@ -1,4 +1,5 @@
 import 'package:am_debug/Services/analytics_service.dart';
+import 'package:am_debug/Services/getstream.dart';
 import 'package:am_debug/UI/Dashboard/Profilepage.dart';
 import 'package:am_debug/UI/City GroupChat/citygroupchat.dart';
 import 'package:am_debug/UI/one-to-one%20chatting/Chat.dart';
@@ -10,6 +11,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:am_debug/UI/Trips/trips.dart';
+import 'package:stream_chat_flutter/stream_chat_flutter.dart';
 import '../Sign In/LoginScreen.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -35,6 +37,7 @@ class _DashboardScreenState extends State<DashboardScreen>
     HelperFunctions.saveUserLoggedInPreferenceKey(true);
     print(Constants.uid);
 
+    //getStreamId();
     getUsername();
   }
 
@@ -43,7 +46,7 @@ class _DashboardScreenState extends State<DashboardScreen>
     print(Constants.uid);
   }
 
-    getPhoneNo() async {
+  getPhoneNo() async {
     Constants.phoneno = await HelperFunctions.getPhonenoPreferenceKey();
     print(Constants.phoneno);
   }
@@ -56,12 +59,20 @@ class _DashboardScreenState extends State<DashboardScreen>
         .get();
   }
 
-  getUsername() async{
-     await getData().then((value) {
+  getUsername() async {
+    await getData().then((value) {
       Constants.myname = (value.data() as Map)["First name"];
       print(Constants.myname);
     });
   }
+
+  //   getStreamId() async{
+  //    await getData().then((value) {
+  //     Constants.streamId = (value.data() as Map)["Stream Id"];
+  //     Constants.streamId = Constants.streamId.toString().substring(0, Constants.streamId.toString().length-11);
+  //     print("Stream Id: ${Constants.streamId}");
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -96,6 +107,8 @@ class _DashboardScreenState extends State<DashboardScreen>
               ],
             ),
           ),
+
+          // For getting data in Drawer from Firestore
           drawer: FutureBuilder(
             future: getData(),
             builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
@@ -110,7 +123,9 @@ class _DashboardScreenState extends State<DashboardScreen>
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => ProfilePage(), settings: RouteSettings(name: 'Profile Screen')));
+                                  builder: (context) => ProfilePage(),
+                                  settings:
+                                      RouteSettings(name: 'Profile Screen')));
                         },
                         child: DrawerHeader(
                           child: Row(children: [
@@ -126,7 +141,8 @@ class _DashboardScreenState extends State<DashboardScreen>
                             SizedBox(
                               width: 10,
                             ),
-                            Text("${(snapshot.data.data() as Map)['First name']}")
+                            Text(
+                                "${(snapshot.data.data() as Map)['First name']}")
                           ]),
                         ),
                       ),
@@ -160,15 +176,19 @@ class _DashboardScreenState extends State<DashboardScreen>
                           title: mediumText('Log Out', Constants.blueClr),
                           leading: Icon(Icons.exit_to_app),
                           onTap: () async {
+                            // Sign Out Functions
                             await FirebaseAuth.instance.signOut();
-                            await AnalyticsService().userSignedOut(Constants.uid);
+                            await AnalyticsService()
+                                .userSignedOut(Constants.uid);
                             HelperFunctions.saveUserLoggedInPreferenceKey(
                                 false);
                             HelperFunctions.saveUidPreferenceKey("");
                             Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => LoginScreen(), settings: RouteSettings(name: 'Login Screen')),
+                                    builder: (context) => LoginScreen(),
+                                    settings:
+                                        RouteSettings(name: 'Login Screen')),
                                 (route) => false);
                           })
                     ]));
